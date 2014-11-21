@@ -78,9 +78,9 @@ namespace UnityRobot
 			Pop(ref _intervalTime);
 
 			_refTime = (float)_intervalTime / 1000f;
-			_rotation = new Quaternion((float)_qX * 0.01f
+			_rotation = new Quaternion((float)_qX * -0.01f
 			                        ,(float)_qZ * -0.01f
-			                        ,(float)_qY * 0.01f
+			                        ,(float)_qY * -0.01f
 			                        ,(float)_qW * 0.01f);
 
 			//Debug.Log(_rotation.eulerAngles);
