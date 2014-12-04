@@ -12,7 +12,6 @@ namespace UnityRobot
 		protected ushort _newValue;
 		protected ushort _value;
 
-
 		protected override void OnAwake ()
 		{
 			outputOnly = false;

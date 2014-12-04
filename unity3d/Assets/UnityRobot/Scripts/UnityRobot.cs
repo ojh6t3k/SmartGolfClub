@@ -11,7 +11,7 @@ namespace UnityRobot
 	[AddComponentMenu("UnityRobot/UnityRobot")]
 	public class UnityRobot : MonoBehaviour
 	{
-		[HideInInspector]
+		[SerializeField]
 		public List<string> portNames = new List<string>();
 		public string portName;
 

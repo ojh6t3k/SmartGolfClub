@@ -7,13 +7,28 @@ using UnityRobot;
 [CustomEditor(typeof(ColorLED))]
 public class ColorLEDInspector : Editor
 {
+	SerializedProperty pwmRed;
+	SerializedProperty pwmGreen;
+	SerializedProperty pwmBlue;
+
+	void OnEnable()
+	{
+		pwmRed = serializedObject.FindProperty("pwmRed");
+		pwmGreen = serializedObject.FindProperty("pwmGreen");
+		pwmBlue = serializedObject.FindProperty("pwmBlue");
+	}
+
 	public override void OnInspectorGUI()
 	{
-		ColorLED colorLED = (ColorLED)target;
+		this.serializedObject.Update();
 
-		colorLED.pwmRed = (DigitalPin)EditorGUILayout.ObjectField("PWM Red", colorLED.pwmRed, typeof(DigitalPin), true);
-		colorLED.pwmGreen = (DigitalPin)EditorGUILayout.ObjectField("PWM Green", colorLED.pwmGreen, typeof(DigitalPin), true);
-		colorLED.pwmBlue = (DigitalPin)EditorGUILayout.ObjectField("PWM Blue", colorLED.pwmBlue, typeof(DigitalPin), true);
+		EditorGUILayout.PropertyField(pwmRed, new GUIContent("PWM Red"));
+		EditorGUILayout.PropertyField(pwmGreen, new GUIContent("PWM Green"));
+		EditorGUILayout.PropertyField(pwmBlue, new GUIContent("PWM Blue"));
+
+		this.serializedObject.ApplyModifiedProperties();
+
+		ColorLED colorLED = (ColorLED)target;
 		colorLED.color = EditorGUILayout.ColorField("Color", colorLED.color);
 		colorLED.calibrationRed = EditorGUILayout.Slider("Calibration Red", colorLED.calibrationRed, -1f, 1f);
 		colorLED.calibrationGreen = EditorGUILayout.Slider("Calibration Green",colorLED.calibrationGreen, -1f, 1f);

@@ -8,7 +8,7 @@ struct s_mympu {
 
 extern struct s_mympu mympu;
 
-int mympu_open(unsigned int rate);
+int mympu_open(unsigned int rate, signed char *orientMatrix);
 int mympu_update();
 
 #endif

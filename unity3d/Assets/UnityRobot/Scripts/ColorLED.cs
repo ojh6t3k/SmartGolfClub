@@ -11,9 +11,13 @@ namespace UnityRobot
 		public DigitalPin pwmGreen;
 		public DigitalPin pwmBlue;
 
+		[SerializeField]
 		private float _calibrationRed = 0f;
+		[SerializeField]
 		private float _calibrationGreen = 0f;
+		[SerializeField]
 		private float _calibrationBlue = 0f;
+		[SerializeField]
 		private Color _color;
 
 		void Awake()

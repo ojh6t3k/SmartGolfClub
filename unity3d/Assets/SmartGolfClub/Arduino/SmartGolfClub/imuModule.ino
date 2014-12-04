@@ -19,10 +19,10 @@ imuModule::imuModule(int id) : UnityModule(id, false)
 
 void imuModule::SetQuarternion(float x, float y, float z, float w)
 {
-	_qX = (short)(x * 100);
-    _qY = (short)(y * 100);
-    _qZ = (short)(z * 100);
-	_qW = (short)(w * 100);
+	_qX = (short)(x * 10000);
+    _qY = (short)(y * 10000);
+    _qZ = (short)(z * 10000);
+	_qW = (short)(w * 10000);
 }
 
 //******************************************************************************

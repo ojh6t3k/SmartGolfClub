@@ -7,11 +7,19 @@ using UnityRobot;
 [CustomEditor(typeof(DigitalPin))]
 public class DigitalPinInspector : Editor
 {
+	SerializedProperty id;
+
+	void OnEnable()
+	{
+		id = serializedObject.FindProperty("id");
+	}
+
 	public override void OnInspectorGUI()
 	{
+		this.serializedObject.Update();
 		DigitalPin digitalPin = (DigitalPin)target;
 
-		digitalPin.id = EditorGUILayout.IntField("ID", digitalPin.id);
+		EditorGUILayout.PropertyField(id, new GUIContent("ID"));
 		digitalPin.mode = (DigitalPin.Mode)EditorGUILayout.EnumPopup("Mode", digitalPin.mode);
 		if(digitalPin.mode == DigitalPin.Mode.OUTPUT)
 		{
@@ -40,5 +48,6 @@ public class DigitalPinInspector : Editor
 		}
 
 		EditorUtility.SetDirty(target);
+		this.serializedObject.ApplyModifiedProperties();
 	}
 }

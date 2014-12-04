@@ -9,6 +9,7 @@ namespace UnityRobot
 		public GameObject target;
 		public Vector3 offsetAngle = Vector3.zero;
 
+		private Quaternion _targetStartRotation;
 		private Quaternion _rotation;
 		private Quaternion _clibRotation;
 		private Quaternion _curRotation;
@@ -28,6 +29,10 @@ namespace UnityRobot
 		{
 			outputOnly = false;
 
+			if(target != null)
+				_targetStartRotation = target.transform.localRotation;
+			else
+				_targetStartRotation = Quaternion.identity;
 			_clibRotation = Quaternion.identity;
 			_curRotation = Quaternion.identity;
 			_toRotation = Quaternion.identity;
@@ -45,7 +50,7 @@ namespace UnityRobot
 				_curRotation = _toRotation;
 
 			if(target != null)
-				target.transform.localRotation = _curRotation;
+				target.transform.localRotation = _targetStartRotation * _curRotation;
 		}
 		
 		protected override void OnModuleStart ()
@@ -78,10 +83,10 @@ namespace UnityRobot
 			Pop(ref _intervalTime);
 
 			_refTime = (float)_intervalTime / 1000f;
-			_rotation = new Quaternion((float)_qX * -0.01f
-			                        ,(float)_qZ * -0.01f
-			                        ,(float)_qY * -0.01f
-			                        ,(float)_qW * 0.01f);
+			_rotation = new Quaternion((float)_qX * -0.0001f
+			                        ,(float)_qZ * -0.0001f
+			                        ,(float)_qY * -0.0001f
+			                        ,(float)_qW * 0.0001f);
 
 			//Debug.Log(_rotation.eulerAngles);
 		}
@@ -95,6 +100,14 @@ namespace UnityRobot
 			get
 			{
 				return _curRotation;
+			}
+		}
+
+		public float IntervalTime
+		{
+			get
+			{
+				return (float)_intervalTime * 0.001f;
 			}
 		}
 

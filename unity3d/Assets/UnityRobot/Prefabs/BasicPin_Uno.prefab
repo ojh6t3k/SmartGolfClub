@@ -564,7 +564,6 @@ MonoBehaviour:
   owner: {fileID: 0}
   id: 19
   maxValue: 1023
-  threshold: 0
 --- !u!114 &11400002
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -579,7 +578,6 @@ MonoBehaviour:
   owner: {fileID: 0}
   id: 18
   maxValue: 1023
-  threshold: 0
 --- !u!114 &11400004
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -594,7 +592,6 @@ MonoBehaviour:
   owner: {fileID: 0}
   id: 17
   maxValue: 1023
-  threshold: 0
 --- !u!114 &11400006
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -609,7 +606,6 @@ MonoBehaviour:
   owner: {fileID: 0}
   id: 16
   maxValue: 1023
-  threshold: 0
 --- !u!114 &11400008
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -624,7 +620,6 @@ MonoBehaviour:
   owner: {fileID: 0}
   id: 15
   maxValue: 1023
-  threshold: 0
 --- !u!114 &11400010
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -639,7 +634,6 @@ MonoBehaviour:
   owner: {fileID: 0}
   id: 14
   maxValue: 1023
-  threshold: 0
 --- !u!114 &11400012
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -831,11 +825,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cbdb2c58c425c194c99845409d32533f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  portNames:
-  - COM8
-  - COM11
-  - COM6
-  portName: COM6
+  portNames: []
+  portName: 
   baudrate: 57600
   timeoutSec: 5
   modules:

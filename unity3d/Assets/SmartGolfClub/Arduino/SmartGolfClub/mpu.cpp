@@ -25,7 +25,74 @@ static short gyro[3];
 static short sensors;
 static unsigned char fifoCount;
 
-int mympu_open(unsigned int rate) {
+////////////////////////////////////////////////////////////////////////////
+//
+//  The functions below are from the InvenSense SDK example code.
+//
+//  Original copyright notice below:
+
+/*
+ $License:
+    Copyright (C) 2011-2012 InvenSense Corporation, All Rights Reserved.
+    See included License.txt for License information.
+ $
+ */
+
+/* These next two functions converts the orientation matrix (see
+ * gyro_orientation) to a scalar representation for use by the DMP.
+ * NOTE: These functions are borrowed from InvenSense's MPL.
+ */
+
+unsigned short inv_row_2_scale(signed char *row)
+{
+    unsigned short b;
+
+    if (row[0] > 0)
+        b = 0;
+    else if (row[0] < 0)
+        b = 4;
+    else if (row[1] > 0)
+        b = 1;
+    else if (row[1] < 0)
+        b = 5;
+    else if (row[2] > 0)
+        b = 2;
+    else if (row[2] < 0)
+        b = 6;
+    else
+        b = 7;      // error
+    return b;
+}
+
+/* The sensors can be mounted onto the board in any orientation. The mounting
+ * matrix seen below tells the MPL how to rotate the raw data from thei
+ * driver(s).
+ * TODO: The following matrices refer to the configuration on an internal test
+ * board at Invensense. If needed, please modify the matrices to match the
+ * chip-to-body matrix for your particular set up.
+ */
+unsigned short inv_orientation_matrix_to_scalar(signed char *mtx)
+{
+    unsigned short scalar;
+    /*
+       XYZ  010_001_000 Identity Matrix
+       XZY  001_010_000
+       YXZ  010_000_001
+       YZX  000_010_001
+       ZXY  001_000_010
+       ZYX  000_001_010
+     */
+    scalar = inv_row_2_scale(mtx);
+    scalar |= inv_row_2_scale(mtx + 3) << 3;
+    scalar |= inv_row_2_scale(mtx + 6) << 6;
+    return scalar;
+}
+
+//
+////////////////////////////////////////////////////////////////////////////
+
+int mympu_open(unsigned int rate, signed char *orientMatrix)
+{
   	mpu_select_device(0);
    	mpu_init_structures();
 
@@ -76,6 +143,8 @@ int mympu_open(unsigned int rate) {
 #ifdef MPU_DEBUG
 	if (ret) return 100+ret;
 #endif
+
+	dmp_set_orientation(inv_orientation_matrix_to_scalar(orientMatrix)); // set up the correct orientation
 
 	ret = dmp_enable_feature(DMP_FEATURE_6X_LP_QUAT|DMP_FEATURE_SEND_CAL_GYRO|DMP_FEATURE_GYRO_CAL);
 //	ret = dmp_enable_feature(DMP_FEATURE_SEND_CAL_GYRO|DMP_FEATURE_GYRO_CAL);
