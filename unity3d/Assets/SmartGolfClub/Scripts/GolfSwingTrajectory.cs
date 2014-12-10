@@ -2,33 +2,40 @@
 using System.Collections;
 using System.Collections.Generic;
 using System;
+using System.IO;
 using UnityRobot;
 
 [RequireComponent(typeof(Animation))]
 public class GolfSwingTrajectory : MonoBehaviour
 {
 	public Animator avatarAnimator;
-	public AnimationClip driveAnimation;
 	public Transform animationTarget;
 	public Transform trajectoryTarget;
 	public imuModule imu;
+	public GolfPoseController golfPose;
 	public Material lineColor;
 	public float speedPlayback = 1f;
+	public bool recordingFile = false;
 
 	private bool _start = false;
 	private bool _recording = false;
 	private bool _playing = false;
+	private int _waitFrameCount;
 	private bool _samplingTrajectory = false;
-	private AnimationCurve _curveAnimationTargetAngleX;
-	private AnimationCurve _curveAnimationTargetAngleY;
-	private AnimationCurve _curveAnimationTargetAngleZ;
+	private AnimationCurve _curveAnimationTargetRotX;
+	private AnimationCurve _curveAnimationTargetRotY;
+	private AnimationCurve _curveAnimationTargetRotZ;
+	private AnimationCurve _curveAnimationTargetRotW;
 	private AnimationCurve _curveTrajectoryTargetPosX;
 	private AnimationCurve _curveTrajectoryTargetPosY;
 	private AnimationCurve _curveTrajectoryTargetPosZ;
 	private float _time;
 	private float _recordingTime;
 	private float _animationTime;
-	private Vector3 _samplingValue;
+	private Vector3 _animationStartAngle;
+	private Quaternion _samplingRot;
+	private Vector3 _samplingPos;
+	private StreamWriter _file;
 
 	// Use this for initialization
 	void Start ()
@@ -45,43 +52,56 @@ public class GolfSwingTrajectory : MonoBehaviour
 		{
 			if(_recording == true)
 			{
-				Vector3 value = animationTarget.rotation.eulerAngles;
-				if(_samplingValue != value)
+				Quaternion rot = animationTarget.rotation;
+				if(_samplingRot != rot)
 				{
-					_curveAnimationTargetAngleX.AddKey(new Keyframe(_time, value.x));
-					_curveAnimationTargetAngleY.AddKey(new Keyframe(_time, value.y));
-					_curveAnimationTargetAngleZ.AddKey(new Keyframe(_time, value.z));
-					_samplingValue = value;
+			//		value.x = NormalizeAngle(value.x);
+			//		value.y = NormalizeAngle(value.y);
+			//		value.z = NormalizeAngle(value.z);
+
+					_curveAnimationTargetRotX.AddKey(new Keyframe(_time, rot.x));
+					_curveAnimationTargetRotY.AddKey(new Keyframe(_time, rot.y));
+					_curveAnimationTargetRotZ.AddKey(new Keyframe(_time, rot.z));
+					_curveAnimationTargetRotW.AddKey(new Keyframe(_time, rot.w));
+					_samplingRot = rot;
+				//	if(_file != null)
+				//		_file.WriteLine(string.Format("{0:F},{1:F},{2:F},{3:F}", value.x, value.y, value.z, _time));
 				}
 				_time += Time.deltaTime;
 			}
 			else if(_playing == true)
 			{
-				Vector3 value = Vector3.zero;
 				float t = _time * speedPlayback;
-				value.x = _curveAnimationTargetAngleX.Evaluate(t);
-				value.y = _curveAnimationTargetAngleY.Evaluate(t);
-				value.z = _curveAnimationTargetAngleZ.Evaluate(t);
-				animationTarget.rotation = Quaternion.Euler(value);
+				animationTarget.rotation = new Quaternion(_curveAnimationTargetRotX.Evaluate(t)
+				                                          ,_curveAnimationTargetRotY.Evaluate(t)
+				                                          ,_curveAnimationTargetRotZ.Evaluate(t)
+				                                          ,_curveAnimationTargetRotW.Evaluate(t));
 
-				if(_samplingTrajectory == false)
+				if(_waitFrameCount > 10)
 				{
-					value = trajectoryTarget.position;
-					if(_samplingValue != value)
+					if(_samplingTrajectory == false)
 					{
-						_curveTrajectoryTargetPosX.AddKey(new Keyframe(t, value.x));
-						_curveTrajectoryTargetPosY.AddKey(new Keyframe(t, value.y));
-						_curveTrajectoryTargetPosZ.AddKey(new Keyframe(t, value.z));
-						_samplingValue = value;
+						Vector3 pos = trajectoryTarget.position;
+						if(_samplingPos != pos)
+						{
+							_curveTrajectoryTargetPosX.AddKey(new Keyframe(t, pos.x));
+							_curveTrajectoryTargetPosY.AddKey(new Keyframe(t, pos.y));
+							_curveTrajectoryTargetPosZ.AddKey(new Keyframe(t, pos.z));
+							_samplingPos = pos;
+						}
+					}
+
+					_time += Time.deltaTime;
+					if(_time > _animationTime)
+					{
+						_samplingTrajectory = true;
+						avatarAnimator.SetBool("Drive", false);
+						golfPose.Reset();
+						_playing = false;
 					}
 				}
-
-				_time += Time.deltaTime;
-				if(_time > _animationTime)
-				{
-					_samplingTrajectory = true;
-					_playing = false;
-				}
+				else
+					_waitFrameCount++;
 			}
 		}
 	}
@@ -130,6 +150,16 @@ public class GolfSwingTrajectory : MonoBehaviour
 		}
 	}
 
+	float NormalizeAngle(float angle)
+	{
+		while(angle > 180f)
+			angle -= 360f;
+		while(angle < -180f)
+			angle += 360f;
+
+		return angle;
+	}
+
 	public bool isRecording
 	{
 		get
@@ -151,12 +181,19 @@ public class GolfSwingTrajectory : MonoBehaviour
 		if(_recording == true)
 			return;
 
-		_curveAnimationTargetAngleX = new AnimationCurve();
-		_curveAnimationTargetAngleY = new AnimationCurve();
-		_curveAnimationTargetAngleZ = new AnimationCurve();
+		_curveAnimationTargetRotX = new AnimationCurve();
+		_curveAnimationTargetRotY = new AnimationCurve();
+		_curveAnimationTargetRotZ = new AnimationCurve();
+		_curveAnimationTargetRotW = new AnimationCurve();
 		_time = 0f;
-		_samplingValue = Vector3.zero;
+		_animationStartAngle = animationTarget.rotation.eulerAngles;
+		_samplingRot = Quaternion.identity;
 		_samplingTrajectory = false;
+
+		if(recordingFile == true)
+			_file = new StreamWriter("RecordingLog.txt");
+		else
+			_file = null;
 
 		_recording = true;
 	}
@@ -166,12 +203,15 @@ public class GolfSwingTrajectory : MonoBehaviour
 		if(_recording == false)
 			return;
 
+		if(_file != null)
+			_file.Close();
+
 		_recording = false;
 		_recordingTime = _time;
 
-		NoiseFiltering(_curveAnimationTargetAngleX.keys);
-		NoiseFiltering(_curveAnimationTargetAngleY.keys);
-		NoiseFiltering(_curveAnimationTargetAngleZ.keys);
+	//	NoiseFiltering(_curveAnimationTargetAngleX.keys);
+	//	NoiseFiltering(_curveAnimationTargetAngleY.keys);
+	//	NoiseFiltering(_curveAnimationTargetAngleZ.keys);
 	}
 
 	public void PlayRecording()
@@ -184,14 +224,13 @@ public class GolfSwingTrajectory : MonoBehaviour
 			_curveTrajectoryTargetPosX = new AnimationCurve();
 			_curveTrajectoryTargetPosY = new AnimationCurve();
 			_curveTrajectoryTargetPosZ = new AnimationCurve();
-			_samplingValue = Vector3.zero;
+			_samplingPos = Vector3.zero;
 		}
 
-		avatarAnimator.speed = driveAnimation.length / _recordingTime * speedPlayback;
 		_animationTime = _recordingTime / speedPlayback;
 		_time = 0f;
-		avatarAnimator.SetTrigger("DriveAction");
-
+		avatarAnimator.SetBool("Drive", true);
+		_waitFrameCount = 0;
 		_playing = true;
 	}
 
