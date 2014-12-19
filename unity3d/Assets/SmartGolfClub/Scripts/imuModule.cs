@@ -9,14 +9,17 @@ namespace UnityRobot
 		public GameObject target;
 		public Vector3 offsetAngle = Vector3.zero;
 
+		public EventHandler OnCalibrated;
+
 		private Quaternion _targetStartRotation;
 		private Quaternion _rotation;
-		private Quaternion _clibRotation;
+		private Quaternion _calibRotation;
 		private Quaternion _curRotation;
 		private Quaternion _fromRotation;
 		private Quaternion _toRotation;
 		private float _time;
 		private float _refTime;
+		private bool _calibrated = false;
 
 		protected short _qX;
 		protected short _qY;
@@ -33,7 +36,7 @@ namespace UnityRobot
 				_targetStartRotation = target.transform.localRotation;
 			else
 				_targetStartRotation = Quaternion.identity;
-			_clibRotation = Quaternion.identity;
+			_calibRotation = Quaternion.identity;
 			_curRotation = Quaternion.identity;
 			_toRotation = Quaternion.identity;
 			_time = 1f;
@@ -51,11 +54,18 @@ namespace UnityRobot
 
 			if(target != null)
 				target.transform.localRotation = _targetStartRotation * _curRotation;
+
+			if(_calibrated == true)
+			{
+				_calibrated = false;
+				if(OnCalibrated != null)
+					OnCalibrated(this, null);
+			}
 		}
 		
 		protected override void OnModuleStart ()
 		{
-			_clibRotation = Quaternion.identity;
+			_calibRotation = Quaternion.identity;
 			_curRotation = Quaternion.identity;
 			_toRotation = Quaternion.identity;
 			_time = 1f;
@@ -70,7 +80,7 @@ namespace UnityRobot
 		protected override void OnAction ()
 		{
 			_fromRotation = _toRotation;
-			_toRotation = Quaternion.Euler(-offsetAngle) * _clibRotation * _rotation;
+			_toRotation = Quaternion.Euler(-offsetAngle) * _calibRotation * _rotation;
 			_time = 0f;
 		}
 		
@@ -113,7 +123,8 @@ namespace UnityRobot
 
 		public void Calibration()
 		{
-			_clibRotation = Quaternion.Inverse(_rotation);
+			_calibRotation = Quaternion.Inverse(_rotation);
+			_calibrated = true;
 		}
 	}
 }

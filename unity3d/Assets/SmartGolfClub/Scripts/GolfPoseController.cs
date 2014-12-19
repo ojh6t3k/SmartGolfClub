@@ -11,6 +11,7 @@ public class GolfPoseController : MonoBehaviour
 	public string yawVarName;
 	public float rightYaw;
 	public float leftYaw;
+	public string driveActionVariable;
 
 	protected Animator animator;
 
@@ -43,7 +44,6 @@ public class GolfPoseController : MonoBehaviour
 			yaw = _grabberRoll / leftYaw;
 		yaw = Mathf.Clamp(yaw, -1f, 1f);
 		animator.SetFloat(yawVarName, yaw);
-
 	}
 	
 	void OnAnimatorIK()
@@ -54,14 +54,25 @@ public class GolfPoseController : MonoBehaviour
 		
 		// Left Hand
 		animator.SetIKRotationWeight(AvatarIKGoal.LeftHand,1.0f);
-		animator.SetIKRotation(AvatarIKGoal.LeftHand,leftHand.rotation);
-		
+		animator.SetIKRotation(AvatarIKGoal.LeftHand,leftHand.rotation);		
 	}
 
 	public void Reset()
 	{
 		_oldGrabberUp = _initGrabberUp;
 		_grabberRoll = 0f;
+	}
+
+	public float DriveAction
+	{
+		get
+		{
+			return animator.GetFloat(driveActionVariable);
+		}
+		set
+		{
+			animator.SetFloat(driveActionVariable, Mathf.Clamp(value, 0f, 1f));
+		}
 	}
 
 	float GetAngle(Vector3 from, Vector3 to, Vector3 up)

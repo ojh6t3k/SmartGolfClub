@@ -25,7 +25,7 @@ public class OrbitControl : MonoBehaviour
 	{
 		if(lookAt != null)
 		{
-            if (autoInput == true)
+			if (autoInput == true)
             {
                 if (Input.GetMouseButton(0) == true)
                 {
