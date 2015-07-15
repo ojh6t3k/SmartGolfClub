@@ -151,7 +151,12 @@ ModelImporter:
     optimizeGameObjects: 0
     motionNodeName: 
     animationImportErrors: 
-    animationImportWarnings: 
+    animationImportWarnings: 'MuscleClip ''Putting'' conversion warning: ''Sophia:Hips/Sophia:Spine/Sophia:Spine1/Sophia:Spine2''
+      is between humanoid transforms and has rotation animation. This might lower
+      retargeting quality.
+
+
+'
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
     animationCompression: 3
@@ -160,7 +165,167 @@ ModelImporter:
     animationScaleError: .5
     animationWrapMode: 0
     extraExposedTransformPaths: []
-    clipAnimations: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: mixamo.com
+      takeName: mixamo.com
+      firstFrame: 0
+      lastFrame: 101
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 1
+      loopBlendPositionY: 1
+      loopBlendPositionXZ: 1
+      keepOriginalOrientation: 1
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 1
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Sophia:Hips
+        weight: 1
+      - path: Sophia:Hips/Sophia:LeftUpLeg
+        weight: 1
+      - path: Sophia:Hips/Sophia:LeftUpLeg/Sophia:LeftLeg
+        weight: 1
+      - path: Sophia:Hips/Sophia:LeftUpLeg/Sophia:LeftLeg/Sophia:LeftFoot
+        weight: 1
+      - path: Sophia:Hips/Sophia:LeftUpLeg/Sophia:LeftLeg/Sophia:LeftFoot/Sophia:LeftToeBase
+        weight: 1
+      - path: Sophia:Hips/Sophia:LeftUpLeg/Sophia:LeftLeg/Sophia:LeftFoot/Sophia:LeftToeBase/Sophia:LeftFootToeBase_End
+        weight: 0
+      - path: Sophia:Hips/Sophia:RightUpLeg
+        weight: 1
+      - path: Sophia:Hips/Sophia:RightUpLeg/Sophia:RightLeg
+        weight: 1
+      - path: Sophia:Hips/Sophia:RightUpLeg/Sophia:RightLeg/Sophia:RightFoot
+        weight: 1
+      - path: Sophia:Hips/Sophia:RightUpLeg/Sophia:RightLeg/Sophia:RightFoot/Sophia:RightToeBase
+        weight: 1
+      - path: Sophia:Hips/Sophia:RightUpLeg/Sophia:RightLeg/Sophia:RightFoot/Sophia:RightToeBase/Sophia:RightFootToeBase_End
+        weight: 0
+      - path: Sophia:Hips/Sophia:Spine
+        weight: 1
+      - path: Sophia:Hips/Sophia:Spine/Sophia:Spine1
+        weight: 1
+      - path: Sophia:Hips/Sophia:Spine/Sophia:Spine1/Sophia:Spine2
+        weight: 1
+      - path: Sophia:Hips/Sophia:Spine/Sophia:Spine1/Sophia:Spine2/Sophia:LeftShoulder
+        weight: 1
+      - path: Sophia:Hips/Sophia:Spine/Sophia:Spine1/Sophia:Spine2/Sophia:LeftShoulder/Sophia:LeftArm
+        weight: 1
+      - path: Sophia:Hips/Sophia:Spine/Sophia:Spine1/Sophia:Spine2/Sophia:LeftShoulder/Sophia:LeftArm/Sophia:LeftForeArm
+        weight: 1
+      - path: Sophia:Hips/Sophia:Spine/Sophia:Spine1/Sophia:Spine2/Sophia:LeftShoulder/Sophia:LeftArm/Sophia:LeftForeArm/Sophia:LeftHand
+        weight: 1
+      - path: Sophia:Hips/Sophia:Spine/Sophia:Spine1/Sophia:Spine2/Sophia:LeftShoulder/Sophia:LeftArm/Sophia:LeftForeArm/Sophia:LeftHand/Sophia:LeftHandIndex1
+        weight: 1
+      - path: Sophia:Hips/Sophia:Spine/Sophia:Spine1/Sophia:Spine2/Sophia:LeftShoulder/Sophia:LeftArm/Sophia:LeftForeArm/Sophia:LeftHand/Sophia:LeftHandIndex1/Sophia:LeftHandIndex2
+        weight: 1
+      - path: Sophia:Hips/Sophia:Spine/Sophia:Spine1/Sophia:Spine2/Sophia:LeftShoulder/Sophia:LeftArm/Sophia:LeftForeArm/Sophia:LeftHand/Sophia:LeftHandIndex1/Sophia:LeftHandIndex2/Sophia:LeftHandIndex3
+        weight: 1
+      - path: Sophia:Hips/Sophia:Spine/Sophia:Spine1/Sophia:Spine2/Sophia:LeftShoulder/Sophia:LeftArm/Sophia:LeftForeArm/Sophia:LeftHand/Sophia:LeftHandIndex1/Sophia:LeftHandIndex2/Sophia:LeftHandIndex3/Sophia:LeftHandIndex4
+        weight: 0
+      - path: Sophia:Hips/Sophia:Spine/Sophia:Spine1/Sophia:Spine2/Sophia:LeftShoulder/Sophia:LeftArm/Sophia:LeftForeArm/Sophia:LeftHand/Sophia:LeftHandMiddle1
+        weight: 1
+      - path: Sophia:Hips/Sophia:Spine/Sophia:Spine1/Sophia:Spine2/Sophia:LeftShoulder/Sophia:LeftArm/Sophia:LeftForeArm/Sophia:LeftHand/Sophia:LeftHandMiddle1/Sophia:LeftHandMiddle2
+        weight: 1
+      - path: Sophia:Hips/Sophia:Spine/Sophia:Spine1/Sophia:Spine2/Sophia:LeftShoulder/Sophia:LeftArm/Sophia:LeftForeArm/Sophia:LeftHand/Sophia:LeftHandMiddle1/Sophia:LeftHandMiddle2/Sophia:LeftHandMiddle3
+        weight: 1
+      - path: Sophia:Hips/Sophia:Spine/Sophia:Spine1/Sophia:Spine2/Sophia:LeftShoulder/Sophia:LeftArm/Sophia:LeftForeArm/Sophia:LeftHand/Sophia:LeftHandMiddle1/Sophia:LeftHandMiddle2/Sophia:LeftHandMiddle3/Sophia:LeftHandMiddle4
+        weight: 0
+      - path: Sophia:Hips/Sophia:Spine/Sophia:Spine1/Sophia:Spine2/Sophia:LeftShoulder/Sophia:LeftArm/Sophia:LeftForeArm/Sophia:LeftHand/Sophia:LeftHandPinky1
+        weight: 1
+      - path: Sophia:Hips/Sophia:Spine/Sophia:Spine1/Sophia:Spine2/Sophia:LeftShoulder/Sophia:LeftArm/Sophia:LeftForeArm/Sophia:LeftHand/Sophia:LeftHandPinky1/Sophia:LeftHandPinky2
+        weight: 1
+      - path: Sophia:Hips/Sophia:Spine/Sophia:Spine1/Sophia:Spine2/Sophia:LeftShoulder/Sophia:LeftArm/Sophia:LeftForeArm/Sophia:LeftHand/Sophia:LeftHandPinky1/Sophia:LeftHandPinky2/Sophia:LeftHandPinky3
+        weight: 1
+      - path: Sophia:Hips/Sophia:Spine/Sophia:Spine1/Sophia:Spine2/Sophia:LeftShoulder/Sophia:LeftArm/Sophia:LeftForeArm/Sophia:LeftHand/Sophia:LeftHandPinky1/Sophia:LeftHandPinky2/Sophia:LeftHandPinky3/Sophia:LeftHandPinky4
+        weight: 0
+      - path: Sophia:Hips/Sophia:Spine/Sophia:Spine1/Sophia:Spine2/Sophia:LeftShoulder/Sophia:LeftArm/Sophia:LeftForeArm/Sophia:LeftHand/Sophia:LeftHandRing1
+        weight: 1
+      - path: Sophia:Hips/Sophia:Spine/Sophia:Spine1/Sophia:Spine2/Sophia:LeftShoulder/Sophia:LeftArm/Sophia:LeftForeArm/Sophia:LeftHand/Sophia:LeftHandRing1/Sophia:LeftHandRing2
+        weight: 1
+      - path: Sophia:Hips/Sophia:Spine/Sophia:Spine1/Sophia:Spine2/Sophia:LeftShoulder/Sophia:LeftArm/Sophia:LeftForeArm/Sophia:LeftHand/Sophia:LeftHandRing1/Sophia:LeftHandRing2/Sophia:LeftHandRing3
+        weight: 1
+      - path: Sophia:Hips/Sophia:Spine/Sophia:Spine1/Sophia:Spine2/Sophia:LeftShoulder/Sophia:LeftArm/Sophia:LeftForeArm/Sophia:LeftHand/Sophia:LeftHandRing1/Sophia:LeftHandRing2/Sophia:LeftHandRing3/Sophia:LeftHandRing4
+        weight: 0
+      - path: Sophia:Hips/Sophia:Spine/Sophia:Spine1/Sophia:Spine2/Sophia:LeftShoulder/Sophia:LeftArm/Sophia:LeftForeArm/Sophia:LeftHand/Sophia:LeftHandThumb1
+        weight: 1
+      - path: Sophia:Hips/Sophia:Spine/Sophia:Spine1/Sophia:Spine2/Sophia:LeftShoulder/Sophia:LeftArm/Sophia:LeftForeArm/Sophia:LeftHand/Sophia:LeftHandThumb1/Sophia:LeftHandThumb2
+        weight: 1
+      - path: Sophia:Hips/Sophia:Spine/Sophia:Spine1/Sophia:Spine2/Sophia:LeftShoulder/Sophia:LeftArm/Sophia:LeftForeArm/Sophia:LeftHand/Sophia:LeftHandThumb1/Sophia:LeftHandThumb2/Sophia:LeftHandThumb3
+        weight: 1
+      - path: Sophia:Hips/Sophia:Spine/Sophia:Spine1/Sophia:Spine2/Sophia:LeftShoulder/Sophia:LeftArm/Sophia:LeftForeArm/Sophia:LeftHand/Sophia:LeftHandThumb1/Sophia:LeftHandThumb2/Sophia:LeftHandThumb3/Sophia:LeftHandThumb4
+        weight: 0
+      - path: Sophia:Hips/Sophia:Spine/Sophia:Spine1/Sophia:Spine2/Sophia:Neck
+        weight: 1
+      - path: Sophia:Hips/Sophia:Spine/Sophia:Spine1/Sophia:Spine2/Sophia:Neck/Sophia:Neck1
+        weight: 1
+      - path: Sophia:Hips/Sophia:Spine/Sophia:Spine1/Sophia:Spine2/Sophia:Neck/Sophia:Neck1/Sophia:Head
+        weight: 1
+      - path: Sophia:Hips/Sophia:Spine/Sophia:Spine1/Sophia:Spine2/Sophia:Neck/Sophia:Neck1/Sophia:Head/Sophia:HeadTop_End
+        weight: 0
+      - path: Sophia:Hips/Sophia:Spine/Sophia:Spine1/Sophia:Spine2/Sophia:RightShoulder
+        weight: 1
+      - path: Sophia:Hips/Sophia:Spine/Sophia:Spine1/Sophia:Spine2/Sophia:RightShoulder/Sophia:RightArm
+        weight: 1
+      - path: Sophia:Hips/Sophia:Spine/Sophia:Spine1/Sophia:Spine2/Sophia:RightShoulder/Sophia:RightArm/Sophia:RightForeArm
+        weight: 1
+      - path: Sophia:Hips/Sophia:Spine/Sophia:Spine1/Sophia:Spine2/Sophia:RightShoulder/Sophia:RightArm/Sophia:RightForeArm/Sophia:RightHand
+        weight: 1
+      - path: Sophia:Hips/Sophia:Spine/Sophia:Spine1/Sophia:Spine2/Sophia:RightShoulder/Sophia:RightArm/Sophia:RightForeArm/Sophia:RightHand/Sophia:RightHandIndex1
+        weight: 1
+      - path: Sophia:Hips/Sophia:Spine/Sophia:Spine1/Sophia:Spine2/Sophia:RightShoulder/Sophia:RightArm/Sophia:RightForeArm/Sophia:RightHand/Sophia:RightHandIndex1/Sophia:RightHandIndex2
+        weight: 1
+      - path: Sophia:Hips/Sophia:Spine/Sophia:Spine1/Sophia:Spine2/Sophia:RightShoulder/Sophia:RightArm/Sophia:RightForeArm/Sophia:RightHand/Sophia:RightHandIndex1/Sophia:RightHandIndex2/Sophia:RightHandIndex3
+        weight: 1
+      - path: Sophia:Hips/Sophia:Spine/Sophia:Spine1/Sophia:Spine2/Sophia:RightShoulder/Sophia:RightArm/Sophia:RightForeArm/Sophia:RightHand/Sophia:RightHandIndex1/Sophia:RightHandIndex2/Sophia:RightHandIndex3/Sophia:RightHandIndex4
+        weight: 0
+      - path: Sophia:Hips/Sophia:Spine/Sophia:Spine1/Sophia:Spine2/Sophia:RightShoulder/Sophia:RightArm/Sophia:RightForeArm/Sophia:RightHand/Sophia:RightHandMiddle1
+        weight: 1
+      - path: Sophia:Hips/Sophia:Spine/Sophia:Spine1/Sophia:Spine2/Sophia:RightShoulder/Sophia:RightArm/Sophia:RightForeArm/Sophia:RightHand/Sophia:RightHandMiddle1/Sophia:RightHandMiddle2
+        weight: 1
+      - path: Sophia:Hips/Sophia:Spine/Sophia:Spine1/Sophia:Spine2/Sophia:RightShoulder/Sophia:RightArm/Sophia:RightForeArm/Sophia:RightHand/Sophia:RightHandMiddle1/Sophia:RightHandMiddle2/Sophia:RightHandMiddle3
+        weight: 1
+      - path: Sophia:Hips/Sophia:Spine/Sophia:Spine1/Sophia:Spine2/Sophia:RightShoulder/Sophia:RightArm/Sophia:RightForeArm/Sophia:RightHand/Sophia:RightHandMiddle1/Sophia:RightHandMiddle2/Sophia:RightHandMiddle3/Sophia:RightHandMiddle4
+        weight: 0
+      - path: Sophia:Hips/Sophia:Spine/Sophia:Spine1/Sophia:Spine2/Sophia:RightShoulder/Sophia:RightArm/Sophia:RightForeArm/Sophia:RightHand/Sophia:RightHandPinky1
+        weight: 1
+      - path: Sophia:Hips/Sophia:Spine/Sophia:Spine1/Sophia:Spine2/Sophia:RightShoulder/Sophia:RightArm/Sophia:RightForeArm/Sophia:RightHand/Sophia:RightHandPinky1/Sophia:RightHandPinky2
+        weight: 1
+      - path: Sophia:Hips/Sophia:Spine/Sophia:Spine1/Sophia:Spine2/Sophia:RightShoulder/Sophia:RightArm/Sophia:RightForeArm/Sophia:RightHand/Sophia:RightHandPinky1/Sophia:RightHandPinky2/Sophia:RightHandPinky3
+        weight: 1
+      - path: Sophia:Hips/Sophia:Spine/Sophia:Spine1/Sophia:Spine2/Sophia:RightShoulder/Sophia:RightArm/Sophia:RightForeArm/Sophia:RightHand/Sophia:RightHandPinky1/Sophia:RightHandPinky2/Sophia:RightHandPinky3/Sophia:RightHandPinky4
+        weight: 0
+      - path: Sophia:Hips/Sophia:Spine/Sophia:Spine1/Sophia:Spine2/Sophia:RightShoulder/Sophia:RightArm/Sophia:RightForeArm/Sophia:RightHand/Sophia:RightHandRing1
+        weight: 1
+      - path: Sophia:Hips/Sophia:Spine/Sophia:Spine1/Sophia:Spine2/Sophia:RightShoulder/Sophia:RightArm/Sophia:RightForeArm/Sophia:RightHand/Sophia:RightHandRing1/Sophia:RightHandRing2
+        weight: 1
+      - path: Sophia:Hips/Sophia:Spine/Sophia:Spine1/Sophia:Spine2/Sophia:RightShoulder/Sophia:RightArm/Sophia:RightForeArm/Sophia:RightHand/Sophia:RightHandRing1/Sophia:RightHandRing2/Sophia:RightHandRing3
+        weight: 1
+      - path: Sophia:Hips/Sophia:Spine/Sophia:Spine1/Sophia:Spine2/Sophia:RightShoulder/Sophia:RightArm/Sophia:RightForeArm/Sophia:RightHand/Sophia:RightHandRing1/Sophia:RightHandRing2/Sophia:RightHandRing3/Sophia:RightHandRing4
+        weight: 0
+      - path: Sophia:Hips/Sophia:Spine/Sophia:Spine1/Sophia:Spine2/Sophia:RightShoulder/Sophia:RightArm/Sophia:RightForeArm/Sophia:RightHand/Sophia:RightHandThumb1
+        weight: 1
+      - path: Sophia:Hips/Sophia:Spine/Sophia:Spine1/Sophia:Spine2/Sophia:RightShoulder/Sophia:RightArm/Sophia:RightForeArm/Sophia:RightHand/Sophia:RightHandThumb1/Sophia:RightHandThumb2
+        weight: 1
+      - path: Sophia:Hips/Sophia:Spine/Sophia:Spine1/Sophia:Spine2/Sophia:RightShoulder/Sophia:RightArm/Sophia:RightForeArm/Sophia:RightHand/Sophia:RightHandThumb1/Sophia:RightHandThumb2/Sophia:RightHandThumb3
+        weight: 1
+      - path: Sophia:Hips/Sophia:Spine/Sophia:Spine1/Sophia:Spine2/Sophia:RightShoulder/Sophia:RightArm/Sophia:RightForeArm/Sophia:RightHand/Sophia:RightHandThumb1/Sophia:RightHandThumb2/Sophia:RightHandThumb3/Sophia:RightHandThumb4
+        weight: 0
+      maskType: 0
+      maskSource: {instanceID: 0}
     isReadable: 1
   meshes:
     lODScreenPercentages: []

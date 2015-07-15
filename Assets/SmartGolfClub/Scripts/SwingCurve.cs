@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.Events;
 using System;
 using System.Text;
 using System.Xml;
@@ -22,6 +23,9 @@ namespace SmartGolf
 		public AnimationCurve clubAngles = new AnimationCurve();
 		public AnimationCurve clubVelocities = new AnimationCurve();
 
+		public UnityEvent OnRecordingStarted;
+		public UnityEvent OnRecordingStopped;
+
 		private AnimationCurve _clubPosX;
 		private AnimationCurve _clubPosY;
 		private AnimationCurve _clubPosZ;
@@ -36,11 +40,17 @@ namespace SmartGolf
 		private float _totalTime;
 		private float _topTime;
 		private float _finishTime;
+		private float _preRollAngle;
+		private float _preRollAngleDiff;
+		private Vector3 _characterCenter;
+		private Vector3 _characterForward;
+		private Vector3 _characterUp;
+		private Vector3 _characterRight;
 
 		// Use this for initialization
 		void Start ()
 		{
-		
+			displayLine = _displayLine;		
 		}
 		
 		// Update is called once per frame
@@ -48,25 +58,41 @@ namespace SmartGolf
 		{
 			if(_recording == true)
 			{
-				Vector3 pos = clubGeometry.clubUp.position - clubGeometry.characterCenter.position;
-				_clubPosX.AddKey(new Keyframe(_time, pos.x));
-				_clubPosY.AddKey(new Keyframe(_time, pos.y));
-				_clubPosZ.AddKey(new Keyframe(_time, pos.z));
+				float curRollAngle = clubGeometry.rollAngle;
+				float curRollAngleDiff = curRollAngle - _preRollAngle;
+				if(_time == 0f)
+				{
+					if(Mathf.Abs(curRollAngleDiff) > 5f)
+					{
+						_time += Time.deltaTime;
+						AddCurve(_time);
+						_preRollAngle = curRollAngle;
+						_preRollAngleDiff = curRollAngleDiff;
+					}
+				}
+				else
+				{
+					_time += Time.deltaTime;
 
-				Vector3 dir = clubGeometry.clubCenter.position - clubGeometry.clubUp.position;
-				dir.Normalize();
-				_clubDirX.AddKey(new Keyframe(_time, dir.x));
-				_clubDirY.AddKey(new Keyframe(_time, dir.y));
-				_clubDirZ.AddKey(new Keyframe(_time, dir.z));
-
-				rollAngles.AddKey(new Keyframe(_time, clubGeometry.rollAngle));
-				yawAngles.AddKey(new Keyframe(_time, clubGeometry.yawAngle));
-				clubAngles.AddKey(new Keyframe(_time, clubGeometry.clubAngle));
+					if(Mathf.Abs(curRollAngleDiff) > 1f)
+					{
+						AddCurve(_time);
+						if(_preRollAngleDiff <= 0f && curRollAngleDiff > 0f)
+						{
+							_topTime = _time;
+						}
+						else if(_preRollAngleDiff >= 0f && curRollAngleDiff < 0f)
+						{
+							_finishTime = _time;
+							RecordingStop();
+						}
+						_preRollAngle = curRollAngle;
+						_preRollAngleDiff = curRollAngleDiff;
+					}
+				}
 
 				if(_time > maxRecordingTime)
 					RecordingStop();
-				else
-					_time += Time.deltaTime;
 			}
 		}
 
@@ -217,7 +243,14 @@ namespace SmartGolf
 			ReadyCurve();
 			
 			_time = 0f;
+			_topTime = 0f;
+			_finishTime = 0f;
+			AddCurve(0f);
+			_preRollAngle = clubGeometry.rollAngle;
+			_preRollAngleDiff = 0f;
 			_recording = true;
+
+			OnRecordingStarted.Invoke();
 		}
 
 		public void RecordingStop()
@@ -227,81 +260,12 @@ namespace SmartGolf
 
 			_recording = false;
 			_totalTime = _time;
-
-			// Noise Filtering
-			bool sign1, sign2;
-			for(int i=0; i<rollAngles.length; i++)
-			{
-				if(i > 0 && i < (rollAngles.length - 2))
-				{
-					if(rollAngles[i].value == rollAngles[i-1].value)
-					{
-						rollAngles.RemoveKey(i);
-						yawAngles.RemoveKey(i);
-						clubAngles.RemoveKey(i);
-						_clubPosX.RemoveKey(i);
-						_clubPosY.RemoveKey(i);
-						_clubPosZ.RemoveKey(i);
-						_clubDirX.RemoveKey(i);
-						_clubDirY.RemoveKey(i);
-						_clubDirZ.RemoveKey(i);
-						i--;
-					}
-					else
-					{
-						if(rollAngles[i].value - rollAngles[i-1].value >= 0f)
-							sign1 = true;
-						else
-							sign1 = false;
-						
-						if(rollAngles[i+1].value - rollAngles[i].value >= 0f)
-							sign2 = true;
-						else
-							sign2 = false;
-						
-						if(sign1 == sign2)
-						{
-							if(Mathf.Abs(rollAngles[i].value - rollAngles[i-1].value) <= 1f)
-							{
-								rollAngles.RemoveKey(i);
-								yawAngles.RemoveKey(i);
-								clubAngles.RemoveKey(i);
-								_clubPosX.RemoveKey(i);
-								_clubPosY.RemoveKey(i);
-								_clubPosZ.RemoveKey(i);
-								_clubDirX.RemoveKey(i);
-								_clubDirY.RemoveKey(i);
-								_clubDirZ.RemoveKey(i);
-								i--;
-							}
-						}
-					}
-				}
-			}
-
-			// Find top/finish Time
-			_topTime = 0f;
-			_finishTime = 0f;
-			for(int i=0; i<rollAngles.length; i++)
-			{
-				if(i > 0 && rollAngles[i].time > 0.5f)
-				{
-					if(_topTime == 0f)
-					{
-						if(rollAngles[i-1].value < rollAngles[i].value)
-							_topTime = rollAngles[i-1].time;
-					}
-					else if(_finishTime == 0f)
-					{
-						if(rollAngles[i-1].value > rollAngles[i].value)
-							_finishTime = rollAngles[i-1].time;
-					}
-					else
-						break;
-				}
-			}
+			if(_finishTime == 0f)
+				_finishTime = _totalTime;
 
 			CompleteCurve();
+
+			OnRecordingStopped.Invoke();
 		}
 
 		private void ReadyCurve()
@@ -318,6 +282,42 @@ namespace SmartGolf
 			_clubDirX = new AnimationCurve();
 			_clubDirY = new AnimationCurve();
 			_clubDirZ = new AnimationCurve();
+
+			_characterCenter = clubGeometry.characterCenter.position;
+			_characterForward = clubGeometry.characterForward.position - _characterCenter;
+			_characterForward.Normalize();
+			_characterUp = clubGeometry.characterUp.position - _characterCenter;
+			_characterUp.Normalize();
+			_characterRight = Vector3.Cross(_characterUp, _characterForward);
+			_characterRight.Normalize();
+		}
+
+		private void AddCurve(float time)
+		{
+			Vector3 pos = clubGeometry.clubUp.position - _characterCenter;
+			_clubPosX.AddKey(new Keyframe(time, ScalarOnVector(pos, _characterRight)));
+			_clubPosY.AddKey(new Keyframe(time, ScalarOnVector(pos, _characterUp)));
+			_clubPosZ.AddKey(new Keyframe(time, ScalarOnVector(pos, _characterForward)));
+			
+			Vector3 dir = clubGeometry.clubCenter.position - clubGeometry.clubUp.position;
+			dir.Normalize();
+			_clubDirX.AddKey(new Keyframe(time, ScalarOnVector(dir, _characterRight)));
+			_clubDirY.AddKey(new Keyframe(time, ScalarOnVector(dir, _characterUp)));
+			_clubDirZ.AddKey(new Keyframe(time, ScalarOnVector(dir, _characterForward)));
+			
+			rollAngles.AddKey(new Keyframe(time, clubGeometry.rollAngle));
+			yawAngles.AddKey(new Keyframe(time, clubGeometry.yawAngle));
+			clubAngles.AddKey(new Keyframe(time, clubGeometry.clubAngle));
+		}
+
+		private float ScalarOnVector(Vector3 vector, Vector3 onNormal)
+		{
+			Vector3 proj = Vector3.Project(vector, onNormal);
+			float scalar = proj.magnitude;
+			if(Vector3.Dot(proj, onNormal) < 0f)
+				scalar = -scalar;
+
+			return scalar;
 		}
 
 		private void CompleteCurve()
@@ -334,75 +334,88 @@ namespace SmartGolf
 
 			// Make Velocity
 			clubVelocities = new AnimationCurve();
-			float time, value;
-			for(int i=0; i<rollAngles.length; i++)
+			float time = 0f;
+			float unitTime = 0.01f;
+			float velocity;
+			float curRollAngle;
+			_preRollAngle = 0f;
+			while(time < _totalTime)
 			{
-				if(i > 0)
-					value = Mathf.Abs(rollAngles[i].value - rollAngles[i-1].value) / (rollAngles[i].time - rollAngles[i-1].time);
-				else
-					value = rollAngles[i].value;
+				velocity = 0f;
+				if(time > 0f)
+				{
+					curRollAngle = rollAngles.Evaluate(time);
+					velocity = Mathf.Abs((curRollAngle - _preRollAngle) / unitTime);
+					_preRollAngle = curRollAngle;
+				}
 
-				time = rollAngles[i].time;
-				clubVelocities.AddKey(new Keyframe(time, value));
+				clubVelocities.AddKey(new Keyframe(time, velocity));
+				time += unitTime;
 			}
+			curRollAngle = rollAngles.Evaluate(_totalTime);
+			velocity = Mathf.Abs((curRollAngle - _preRollAngle) / (_totalTime - (time - unitTime)));
+			clubVelocities.AddKey(new Keyframe(_totalTime, velocity));
+
 			MakeSmoothCurve(ref clubVelocities);
 
-			// Make Line
+			// Make Display Line
 			Vector3 offset = clubGeometry.clubUp.position - clubGeometry.clubCenter.position;
 			float clubLength = offset.magnitude;
-			
-			int upSwingKeyCount = 0;
-			for(int i=0; i<rollAngles.length; i++)
-			{
-				if(rollAngles[i].time >= _topTime)
-				{
-					upSwingKeyCount = i + 1;
-					break;
-				}
-			}
+			unitTime = 0.02f;
+			int keyCount = (int)(_topTime / unitTime) + 1;
+			Vector3 pos, dir;
 			if(upSwingLine != null)
 			{
-				upSwingLine.SetVertexCount(upSwingKeyCount);
-				for(int i=0; i<upSwingKeyCount; i++)
+				upSwingLine.SetVertexCount(keyCount);
+				if(keyCount > 0)
 				{
-					Vector3 pos = new Vector3(_clubPosX[i].value
-					                          ,_clubPosY[i].value
-					                          ,_clubPosZ[i].value);
-					Vector3 dir = new Vector3(_clubDirX[i].value
-					                          ,_clubDirY[i].value
-					                          ,_clubDirZ[i].value);
-					dir.Normalize();
-					pos += clubGeometry.characterCenter.position;
-					upSwingLine.SetPosition(i, pos + dir * clubLength);
+					int i = 0;
+					time = 0f;
+					while(i < (keyCount - 1))
+					{
+						pos = _clubPosX.Evaluate(time) * _characterRight + _clubPosY.Evaluate(time) * _characterUp + _clubPosZ.Evaluate(time) * _characterForward;
+						dir = _clubDirX.Evaluate(time) * _characterRight + _clubDirY.Evaluate(time) * _characterUp + _clubDirZ.Evaluate(time) * _characterForward;
+						dir.Normalize();
+						upSwingLine.SetPosition(i, _characterCenter + pos + dir * clubLength);
+
+						time += unitTime;
+						time = Math.Min(time, _topTime);
+						i++;
+					}
 				}
+				pos = _clubPosX.Evaluate(_topTime) * _characterRight + _clubPosY.Evaluate(_topTime) * _characterUp + _clubPosZ.Evaluate(_topTime) * _characterForward;
+				dir = _clubDirX.Evaluate(_topTime) * _characterRight + _clubDirY.Evaluate(_topTime) * _characterUp + _clubDirZ.Evaluate(_topTime) * _characterForward;
+				dir.Normalize();
+				upSwingLine.SetPosition(keyCount - 1, _characterCenter + pos + dir * clubLength);
 			}
-			
-			int downSwingCount = 0;
-			for(int i=upSwingKeyCount; i<rollAngles.length; i++)
-			{
-				if(rollAngles[i].time >= _finishTime)
-				{
-					downSwingCount = (i + 1) - upSwingKeyCount;
-					break;
-				}
-			}
+
+			unitTime = 0.005f;
+			keyCount = (int)((_finishTime - _topTime) / unitTime) + 1;
 			if(downSwingLine != null)
 			{
-				downSwingLine.SetVertexCount(downSwingCount);
-				for(int i=0; i<downSwingCount; i++)
+				downSwingLine.SetVertexCount(keyCount);
+				if(keyCount > 0)
 				{
-					Vector3 pos = new Vector3(_clubPosX[i+upSwingKeyCount].value
-					                          ,_clubPosY[i+upSwingKeyCount].value
-					                          ,_clubPosZ[i+upSwingKeyCount].value);
-					Vector3 dir = new Vector3(_clubDirX[i+upSwingKeyCount].value
-					                          ,_clubDirY[i+upSwingKeyCount].value
-					                          ,_clubDirZ[i+upSwingKeyCount].value);
-					dir.Normalize();
-					pos += clubGeometry.characterCenter.position;
-					downSwingLine.SetPosition(i, pos + dir * clubLength);
+					int i = 0;
+					time = _topTime;
+					while(i < (keyCount - 1))
+					{
+						pos = _clubPosX.Evaluate(time) * _characterRight + _clubPosY.Evaluate(time) * _characterUp + _clubPosZ.Evaluate(time) * _characterForward;
+						dir = _clubDirX.Evaluate(time) * _characterRight + _clubDirY.Evaluate(time) * _characterUp + _clubDirZ.Evaluate(time) * _characterForward;
+						dir.Normalize();
+						downSwingLine.SetPosition(i, _characterCenter + pos + dir * clubLength);
+						
+						time += unitTime;
+						time = Math.Min(time, _finishTime);
+						i++;
+					}
 				}
+				pos = _clubPosX.Evaluate(_finishTime) * _characterRight + _clubPosY.Evaluate(_finishTime) * _characterUp + _clubPosZ.Evaluate(_finishTime) * _characterForward;
+				dir = _clubDirX.Evaluate(_finishTime) * _characterRight + _clubDirY.Evaluate(_finishTime) * _characterUp + _clubDirZ.Evaluate(_finishTime) * _characterForward;
+				dir.Normalize();
+				downSwingLine.SetPosition(keyCount - 1, _characterCenter + pos + dir * clubLength);
 			}
-			
+
 			_dataEnable = true;
 		}
 

@@ -12,6 +12,8 @@ public class SwingCurveInspector : Editor
 	SerializedProperty maxRecordingTime;
 	SerializedProperty upSwingLine;
 	SerializedProperty downSwingLine;
+	SerializedProperty OnRecordingStarted;
+	SerializedProperty OnRecordingStopped;
 
 	void OnEnable()
 	{
@@ -21,6 +23,8 @@ public class SwingCurveInspector : Editor
 		maxRecordingTime = serializedObject.FindProperty("maxRecordingTime");
 		upSwingLine = serializedObject.FindProperty("upSwingLine");
 		downSwingLine = serializedObject.FindProperty("downSwingLine");
+		OnRecordingStarted = serializedObject.FindProperty("OnRecordingStarted");
+		OnRecordingStopped = serializedObject.FindProperty("OnRecordingStopped");
 	}
 	
 	public override void OnInspectorGUI()
@@ -73,6 +77,10 @@ public class SwingCurveInspector : Editor
 
 			EditorUtility.SetDirty(target);
 		}
+
+		EditorGUILayout.Space();
+		EditorGUILayout.PropertyField(OnRecordingStarted, new GUIContent("OnRecordingStarted"));
+		EditorGUILayout.PropertyField(OnRecordingStopped, new GUIContent("OnRecordingStopped"));
 		
 		this.serializedObject.ApplyModifiedProperties();
 	}
