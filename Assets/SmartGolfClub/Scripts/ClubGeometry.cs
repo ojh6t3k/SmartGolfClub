@@ -14,6 +14,8 @@ namespace SmartGolf
 		public Transform clubUp;
 		public Transform clubForward;
 
+		public bool displayDebug = true;
+
 		private Vector3 _characterForward;
 		private Vector3 _characterUp;
 		private Vector3 _characterRight;
@@ -28,6 +30,7 @@ namespace SmartGolf
 
 		private Vector3 _clubShaft;
 		private Vector3 _clubForwardFrom;
+		private Vector3 _clubInitDirection;
 
 		private float _rollAngle;
 		private float _yawAngle;
@@ -65,6 +68,9 @@ namespace SmartGolf
 
 		void OnDrawGizmos()
 		{
+			if(displayDebug == false)
+				return;
+
 			if(characterCenter != null && characterUp != null && characterForward != null)
 			{
 				Gizmos.color = Color.blue;
@@ -130,6 +136,14 @@ namespace SmartGolf
 			get
 			{
 				return _clubAngle;
+			}
+		}
+
+		public Vector3 clubDirection
+		{
+			get
+			{
+				return _clubShaft.normalized;
 			}
 		}
 

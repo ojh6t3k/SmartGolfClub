@@ -9,7 +9,7 @@ namespace SmartGolf
 		public Animator animator;
 		public string swingState = "Swing";
 		public int layer = 0;
-		public float swingLength;
+		public AnimationClip swingClip;
 		public SwingCurve swingCurve;
 
 		private float _normalizedTime;
@@ -26,7 +26,7 @@ namespace SmartGolf
 		{
 			if(_creatingCurve == true)
 			{
-				if(_time >= swingLength)
+				if(_time >= swingClip.length)
 				{
 					_creatingCurve = false;
 					swingCurve.RecordingStop();
@@ -43,6 +43,28 @@ namespace SmartGolf
 				animator.speed = 1f;
 				animator.Play(swingState, layer, 0f);
 			}
+		}
+
+		public void UpSwingPose(float rollAngle)
+		{
+			if(animator == null || swingCurve == null)
+				return;
+
+			if(swingCurve.dataEnabled == false)
+				return;
+
+			normalizedTime = swingCurve.upswingMap.Evaluate(rollAngle) / swingClip.length;
+		}
+
+		public void DownSwingPose(float rollAngle)
+		{
+			if(animator == null || swingCurve == null)
+				return;
+
+			if(swingCurve.dataEnabled == false)
+				return;
+
+			normalizedTime = swingCurve.downswingMap.Evaluate(rollAngle) / swingClip.length;
 		}
 
 		public float normalizedTime

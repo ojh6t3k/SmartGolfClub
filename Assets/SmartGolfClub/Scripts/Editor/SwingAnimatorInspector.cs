@@ -9,7 +9,7 @@ public class SwingAnimatorInspector : Editor
 	SerializedProperty animator;
 	SerializedProperty swingState;
 	SerializedProperty layer;
-	SerializedProperty swingLength;
+	SerializedProperty swingClip;
 	SerializedProperty swingCurve;
 
 	void OnEnable()
@@ -17,7 +17,7 @@ public class SwingAnimatorInspector : Editor
 		animator = serializedObject.FindProperty("animator");
 		swingState = serializedObject.FindProperty("swingState");
 		layer = serializedObject.FindProperty("layer");
-		swingLength = serializedObject.FindProperty("swingLength");
+		swingClip = serializedObject.FindProperty("swingClip");
 		swingCurve = serializedObject.FindProperty("swingCurve");
 	}
 	
@@ -30,16 +30,17 @@ public class SwingAnimatorInspector : Editor
 		EditorGUILayout.PropertyField(animator, new GUIContent("animator"));
 		EditorGUILayout.PropertyField(swingState, new GUIContent("swingState"));
 		EditorGUILayout.PropertyField(layer, new GUIContent("layer"));
-		EditorGUILayout.PropertyField(swingLength, new GUIContent("swingLength"));
+		EditorGUILayout.PropertyField(swingClip, new GUIContent("swingClip"));
 		EditorGUILayout.PropertyField(swingCurve, new GUIContent("swingCurve"));
 
 		if(Application.isPlaying == true)
 		{
-			if(GUILayout.Button("Swing") == true)
-				swingAnimator.Swing();
-
 			swingAnimator.normalizedTime = EditorGUILayout.Slider(swingAnimator.normalizedTime, 0f, 1f);
 
+			GUI.enabled = !swingAnimator.isCreatingCurve;
+
+			if(GUILayout.Button("Swing") == true)
+				swingAnimator.Swing();
 			if(GUILayout.Button("Create Curve") == true)
 				swingAnimator.CreateCurve();
 		}

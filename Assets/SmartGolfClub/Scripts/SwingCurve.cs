@@ -18,27 +18,46 @@ namespace SmartGolf
 		public LineRenderer upSwingLine;
 		public LineRenderer downSwingLine;
 
+		[SerializeField]
 		public AnimationCurve rollAngles = new AnimationCurve();
+		[SerializeField]
 		public AnimationCurve yawAngles = new AnimationCurve();
+		[SerializeField]
 		public AnimationCurve clubAngles = new AnimationCurve();
+		[SerializeField]
 		public AnimationCurve clubVelocities = new AnimationCurve();
+		[SerializeField]
+		public AnimationCurve upswingMap = new AnimationCurve();
+		[SerializeField]
+		public AnimationCurve downswingMap = new AnimationCurve();
 
 		public UnityEvent OnRecordingStarted;
 		public UnityEvent OnRecordingStopped;
 
+		[SerializeField]
 		private AnimationCurve _clubPosX;
+		[SerializeField]
 		private AnimationCurve _clubPosY;
+		[SerializeField]
 		private AnimationCurve _clubPosZ;
+		[SerializeField]
 		private AnimationCurve _clubDirX;
+		[SerializeField]
 		private AnimationCurve _clubDirY;
+		[SerializeField]
 		private AnimationCurve _clubDirZ;
 
 		private bool _displayLine = false;
+		[SerializeField]
 		private bool _dataEnable = false;
 		private bool _recording = false;
 		private float _time;
+		private float _preTime;
+		[SerializeField]
 		private float _totalTime;
+		[SerializeField]
 		private float _topTime;
+		[SerializeField]
 		private float _finishTime;
 		private float _preRollAngle;
 		private float _preRollAngleDiff;
@@ -46,6 +65,7 @@ namespace SmartGolf
 		private Vector3 _characterForward;
 		private Vector3 _characterUp;
 		private Vector3 _characterRight;
+		private float _clubLength;
 
 		// Use this for initialization
 		void Start ()
@@ -72,20 +92,23 @@ namespace SmartGolf
 				}
 				else
 				{
+					_preTime = _time;
 					_time += Time.deltaTime;
 
 					if(Mathf.Abs(curRollAngleDiff) > 1f)
 					{
-						AddCurve(_time);
 						if(_preRollAngleDiff <= 0f && curRollAngleDiff > 0f)
 						{
-							_topTime = _time;
+							_topTime = _preTime;
 						}
 						else if(_preRollAngleDiff >= 0f && curRollAngleDiff < 0f)
 						{
-							_finishTime = _time;
+							_time = _preTime;
 							RecordingStop();
+							return;
 						}
+
+						AddCurve(_time);
 						_preRollAngle = curRollAngle;
 						_preRollAngleDiff = curRollAngleDiff;
 					}
@@ -260,21 +283,23 @@ namespace SmartGolf
 
 			_recording = false;
 			_totalTime = _time;
-			if(_finishTime == 0f)
-				_finishTime = _totalTime;
+			_finishTime = _totalTime;
 
 			CompleteCurve();
 
 			OnRecordingStopped.Invoke();
 		}
 
-		private void ReadyCurve()
+		public void ClearCurve()
 		{
 			_dataEnable = false;
 			
 			rollAngles = new AnimationCurve();
 			yawAngles = new AnimationCurve();
 			clubAngles = new AnimationCurve();
+			clubVelocities = new AnimationCurve();
+			upswingMap = new AnimationCurve();
+			downswingMap = new AnimationCurve();
 			
 			_clubPosX = new AnimationCurve();
 			_clubPosY = new AnimationCurve();
@@ -282,6 +307,11 @@ namespace SmartGolf
 			_clubDirX = new AnimationCurve();
 			_clubDirY = new AnimationCurve();
 			_clubDirZ = new AnimationCurve();
+		}
+
+		private void ReadyCurve()
+		{
+			ClearCurve();
 
 			_characterCenter = clubGeometry.characterCenter.position;
 			_characterForward = clubGeometry.characterForward.position - _characterCenter;
@@ -290,6 +320,9 @@ namespace SmartGolf
 			_characterUp.Normalize();
 			_characterRight = Vector3.Cross(_characterUp, _characterForward);
 			_characterRight.Normalize();
+
+			Vector3 offset = clubGeometry.clubUp.position - clubGeometry.clubCenter.position;
+			_clubLength = offset.magnitude;
 		}
 
 		private void AddCurve(float time)
@@ -333,7 +366,6 @@ namespace SmartGolf
 			MakeSmoothCurve(ref _clubDirZ);
 
 			// Make Velocity
-			clubVelocities = new AnimationCurve();
 			float time = 0f;
 			float unitTime = 0.01f;
 			float velocity;
@@ -358,12 +390,39 @@ namespace SmartGolf
 
 			MakeSmoothCurve(ref clubVelocities);
 
+			// Make Swing Map
+			unitTime = 0.02f;
+			time = 0f;
+			while(true)
+			{
+				upswingMap.AddKey(new Keyframe(rollAngles.Evaluate(time), time));
+				if(time == _topTime)
+					break;
+				else
+				{
+					time += unitTime;
+					time = Mathf.Min(time, _topTime);
+				}
+			}
+			MakeSmoothCurve(ref upswingMap);
+
+			time = _topTime;
+			while(true)
+			{
+				downswingMap.AddKey(new Keyframe(rollAngles.Evaluate(time), time));
+				if(time == _finishTime)
+					break;
+				else
+				{
+					time += unitTime;
+					time = Mathf.Min(time, _finishTime);
+				}
+			}
+			MakeSmoothCurve(ref downswingMap);
+
 			// Make Display Line
-			Vector3 offset = clubGeometry.clubUp.position - clubGeometry.clubCenter.position;
-			float clubLength = offset.magnitude;
 			unitTime = 0.02f;
 			int keyCount = (int)(_topTime / unitTime) + 1;
-			Vector3 pos, dir;
 			if(upSwingLine != null)
 			{
 				upSwingLine.SetVertexCount(keyCount);
@@ -373,20 +432,14 @@ namespace SmartGolf
 					time = 0f;
 					while(i < (keyCount - 1))
 					{
-						pos = _clubPosX.Evaluate(time) * _characterRight + _clubPosY.Evaluate(time) * _characterUp + _clubPosZ.Evaluate(time) * _characterForward;
-						dir = _clubDirX.Evaluate(time) * _characterRight + _clubDirY.Evaluate(time) * _characterUp + _clubDirZ.Evaluate(time) * _characterForward;
-						dir.Normalize();
-						upSwingLine.SetPosition(i, _characterCenter + pos + dir * clubLength);
+						upSwingLine.SetPosition(i, GetClubPosition(time));
 
 						time += unitTime;
 						time = Math.Min(time, _topTime);
 						i++;
 					}
 				}
-				pos = _clubPosX.Evaluate(_topTime) * _characterRight + _clubPosY.Evaluate(_topTime) * _characterUp + _clubPosZ.Evaluate(_topTime) * _characterForward;
-				dir = _clubDirX.Evaluate(_topTime) * _characterRight + _clubDirY.Evaluate(_topTime) * _characterUp + _clubDirZ.Evaluate(_topTime) * _characterForward;
-				dir.Normalize();
-				upSwingLine.SetPosition(keyCount - 1, _characterCenter + pos + dir * clubLength);
+				upSwingLine.SetPosition(keyCount - 1, GetClubPosition(_topTime));
 			}
 
 			unitTime = 0.005f;
@@ -400,23 +453,33 @@ namespace SmartGolf
 					time = _topTime;
 					while(i < (keyCount - 1))
 					{
-						pos = _clubPosX.Evaluate(time) * _characterRight + _clubPosY.Evaluate(time) * _characterUp + _clubPosZ.Evaluate(time) * _characterForward;
-						dir = _clubDirX.Evaluate(time) * _characterRight + _clubDirY.Evaluate(time) * _characterUp + _clubDirZ.Evaluate(time) * _characterForward;
-						dir.Normalize();
-						downSwingLine.SetPosition(i, _characterCenter + pos + dir * clubLength);
+						downSwingLine.SetPosition(i, GetClubPosition(time));
 						
 						time += unitTime;
 						time = Math.Min(time, _finishTime);
 						i++;
 					}
 				}
-				pos = _clubPosX.Evaluate(_finishTime) * _characterRight + _clubPosY.Evaluate(_finishTime) * _characterUp + _clubPosZ.Evaluate(_finishTime) * _characterForward;
-				dir = _clubDirX.Evaluate(_finishTime) * _characterRight + _clubDirY.Evaluate(_finishTime) * _characterUp + _clubDirZ.Evaluate(_finishTime) * _characterForward;
-				dir.Normalize();
-				downSwingLine.SetPosition(keyCount - 1, _characterCenter + pos + dir * clubLength);
+				downSwingLine.SetPosition(keyCount - 1, GetClubPosition(_finishTime));
 			}
 
 			_dataEnable = true;
+		}
+
+		public Vector3 GetClubPosition(float time)
+		{
+			Vector3 pos = _clubPosX.Evaluate(time) * _characterRight + _clubPosY.Evaluate(time) * _characterUp + _clubPosZ.Evaluate(time) * _characterForward;
+			Vector3 dir = _clubDirX.Evaluate(time) * _characterRight + _clubDirY.Evaluate(time) * _characterUp + _clubDirZ.Evaluate(time) * _characterForward;
+			dir.Normalize();
+
+			return _characterCenter + pos + dir * _clubLength;
+		}
+
+		public Vector3 GetClubDirection(float time)
+		{
+			Vector3 dir = _clubDirX.Evaluate(time) * _characterRight + _clubDirY.Evaluate(time) * _characterUp + _clubDirZ.Evaluate(time) * _characterForward;
+			dir.Normalize();
+			return dir;
 		}
 
 		private void MakeSmoothCurve(ref AnimationCurve curve)

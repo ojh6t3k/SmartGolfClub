@@ -12,6 +12,7 @@ public class ClubGeometrynspector : Editor
 	SerializedProperty clubCenter;
 	SerializedProperty clubForward;
 	SerializedProperty clubUp;
+	SerializedProperty displayDebug;
 	
 	void OnEnable()
 	{
@@ -21,6 +22,7 @@ public class ClubGeometrynspector : Editor
 		clubCenter = serializedObject.FindProperty("clubCenter");
 		clubForward = serializedObject.FindProperty("clubForward");
 		clubUp = serializedObject.FindProperty("clubUp");
+		displayDebug = serializedObject.FindProperty("displayDebug");
 	}
 	
 	public override void OnInspectorGUI()
@@ -35,6 +37,7 @@ public class ClubGeometrynspector : Editor
 		EditorGUILayout.PropertyField(clubCenter, new GUIContent("clubCenter"));
 		EditorGUILayout.PropertyField(clubForward, new GUIContent("clubForward"));
 		EditorGUILayout.PropertyField(clubUp, new GUIContent("clubUp"));
+		EditorGUILayout.PropertyField(displayDebug, new GUIContent("displayDebug"));
 
 		if(Application.isPlaying == true)
 		{

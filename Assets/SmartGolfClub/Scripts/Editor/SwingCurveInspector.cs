@@ -40,12 +40,20 @@ public class SwingCurveInspector : Editor
 		EditorGUILayout.PropertyField(upSwingLine, new GUIContent("upSwingLine"));
 		EditorGUILayout.PropertyField(downSwingLine, new GUIContent("downSwingLine"));
 
+		if(swingCurve.swingData != null)
+		{
+			if(GUILayout.Button("Load Curve") == true)
+				swingCurve.LoadCurve();
+		}
+
 		if(swingCurve.dataEnabled == true)
 		{
 			EditorGUILayout.CurveField("Roll Angle", swingCurve.rollAngles);
 			EditorGUILayout.CurveField("Yaw Angle", swingCurve.yawAngles);
 			EditorGUILayout.CurveField("Club Angle", swingCurve.clubAngles);
 			EditorGUILayout.CurveField("Club Velocity", swingCurve.clubVelocities);
+			EditorGUILayout.CurveField("Up Swing Map", swingCurve.upswingMap);
+			EditorGUILayout.CurveField("Down Swing Map", swingCurve.downswingMap);
 			EditorGUILayout.FloatField("Total Time", swingCurve.totalTime);
 			EditorGUILayout.FloatField("Top Time", swingCurve.topTime);
 			EditorGUILayout.FloatField("Finish Time", swingCurve.finishTime);
@@ -54,16 +62,12 @@ public class SwingCurveInspector : Editor
 
 			if(GUILayout.Button("Save Curve") == true)
 				swingCurve.SaveCurve(EditorUtility.SaveFilePanel("Save Curve", "Assets", swingCurve.dataName, "xml"));
+			if(GUILayout.Button("Clear Curve") == true)
+				swingCurve.ClearCurve();
 		}
 
 		if(Application.isPlaying == true)
 		{
-			if(swingCurve.swingData != null)
-			{
-				if(GUILayout.Button("Load Curve") == true)
-					swingCurve.LoadCurve();
-			}
-
 			if(swingCurve.isRecording == false)
 			{
 				if(GUILayout.Button("Recording Start") == true)
