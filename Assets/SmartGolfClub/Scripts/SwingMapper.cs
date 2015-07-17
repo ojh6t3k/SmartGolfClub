@@ -52,7 +52,13 @@ namespace SmartGolf
 						controlAnimator.DownSwingPose(rollAngle);
 					}
 
-					imu.target.rotation = Quaternion.FromToRotation(userClub.clubDirection, -userCurve.GetClubDirection(t)) * imu.target.rotation;
+					Vector3 from = userClub.clubDirUp;
+					Vector3 to = userCurve.GetClubDirUp(t);
+					imu.target.rotation = Quaternion.FromToRotation(from, to) * imu.target.rotation;
+
+					from = userClub.clubDirForward;
+					to = userCurve.GetClubDirForward(t);
+					imu.target.rotation = Quaternion.FromToRotation(from, to) * imu.target.rotation;
 
 					_time += Time.deltaTime;
 					_time = Mathf.Min(_time, _totalTime);

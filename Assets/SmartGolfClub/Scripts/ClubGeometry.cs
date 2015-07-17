@@ -30,7 +30,6 @@ namespace SmartGolf
 
 		private Vector3 _clubShaft;
 		private Vector3 _clubForwardFrom;
-		private Vector3 _clubInitDirection;
 
 		private float _rollAngle;
 		private float _yawAngle;
@@ -58,9 +57,9 @@ namespace SmartGolf
 			_yawAngle += GetAngle(_clubShaftOnYaw, curVector, _characterUp);
 			_clubShaftOnYaw = curVector;
 
-			Vector3 clubShaft = clubUp.position - clubCenter.position;
-			Quaternion rot = Quaternion.FromToRotation(_clubShaft, clubShaft);
-			_clubShaft = clubShaft;
+			curVector = clubUp.position - clubCenter.position;
+			Quaternion rot = Quaternion.FromToRotation(_clubShaft, curVector);
+			_clubShaft = curVector;
 			_clubForwardFrom = rot * _clubForwardFrom;
 			curVector = clubForward.position - clubCenter.position;
 			_clubAngle = GetAngle(_clubForwardFrom, curVector, _clubShaft);
@@ -139,11 +138,29 @@ namespace SmartGolf
 			}
 		}
 
-		public Vector3 clubDirection
+		public Vector3 clubDirUp
 		{
 			get
 			{
-				return _clubShaft.normalized;
+				Vector3 dir = clubUp.position - clubCenter.position;
+				return dir.normalized;
+			}
+		}
+
+		public Vector3 clubDirForward
+		{
+			get
+			{
+				Vector3 dir = clubForward.position - clubCenter.position;
+				return dir.normalized;
+			}
+		}
+
+		public float clubLength
+		{
+			get
+			{
+				return Vector3.Distance(clubUp.position, clubCenter.position);
 			}
 		}
 

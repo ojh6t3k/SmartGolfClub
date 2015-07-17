@@ -10,17 +10,23 @@ namespace SmartGolf
 		public Transform toPivot;
 
 		// Use this for initialization
-		void Start () {
+		void Start ()
+		{
 		
 		}
 		
 		// Update is called once per frame
 		void Update ()
 		{
+				
+		}
+
+		void LateUpdate()
+		{
 			if(root != null && toPivot != null)
 			{
 				root.position += (toPivot.position - transform.position);
-			}		
+			}
 		}
 	}
 }

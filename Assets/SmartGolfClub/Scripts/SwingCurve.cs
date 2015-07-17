@@ -41,11 +41,17 @@ namespace SmartGolf
 		[SerializeField]
 		private AnimationCurve _clubPosZ;
 		[SerializeField]
-		private AnimationCurve _clubDirX;
+		private AnimationCurve _clubUpX;
 		[SerializeField]
-		private AnimationCurve _clubDirY;
+		private AnimationCurve _clubUpY;
 		[SerializeField]
-		private AnimationCurve _clubDirZ;
+		private AnimationCurve _clubUpZ;
+		[SerializeField]
+		private AnimationCurve _clubForwardX;
+		[SerializeField]
+		private AnimationCurve _clubForwardY;
+		[SerializeField]
+		private AnimationCurve _clubForwardZ;
 
 		private bool _displayLine = false;
 		[SerializeField]
@@ -65,7 +71,6 @@ namespace SmartGolf
 		private Vector3 _characterForward;
 		private Vector3 _characterUp;
 		private Vector3 _characterRight;
-		private float _clubLength;
 
 		// Use this for initialization
 		void Start ()
@@ -172,11 +177,17 @@ namespace SmartGolf
 				_clubPosY.AddKey(new Keyframe(time, float.Parse(tokens[1])));
 				_clubPosZ.AddKey(new Keyframe(time, float.Parse(tokens[2])));
 				
-				value = xmlNodes[i].Attributes["dir"].Value;
+				value = xmlNodes[i].Attributes["up"].Value;
 				tokens = value.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-				_clubDirX.AddKey(new Keyframe(time, float.Parse(tokens[0])));
-				_clubDirY.AddKey(new Keyframe(time, float.Parse(tokens[1])));
-				_clubDirZ.AddKey(new Keyframe(time, float.Parse(tokens[2])));
+				_clubUpX.AddKey(new Keyframe(time, float.Parse(tokens[0])));
+				_clubUpY.AddKey(new Keyframe(time, float.Parse(tokens[1])));
+				_clubUpZ.AddKey(new Keyframe(time, float.Parse(tokens[2])));
+
+				value = xmlNodes[i].Attributes["forward"].Value;
+				tokens = value.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+				_clubForwardX.AddKey(new Keyframe(time, float.Parse(tokens[0])));
+				_clubForwardY.AddKey(new Keyframe(time, float.Parse(tokens[1])));
+				_clubForwardZ.AddKey(new Keyframe(time, float.Parse(tokens[2])));
 			}
 
 			CompleteCurve();
@@ -245,8 +256,12 @@ namespace SmartGolf
 				xmlattr.Value = string.Format("{0:f},{1:f},{2:f}", _clubPosX[i].value, _clubPosY[i].value, _clubPosZ[i].value);
 				xmlKeyFrame.Attributes.Append(xmlattr);
 				
-				xmlattr = xmldoc.CreateAttribute("dir");
-				xmlattr.Value = string.Format("{0:f},{1:f},{2:f}", _clubDirX[i].value, _clubDirY[i].value, _clubDirZ[i].value);
+				xmlattr = xmldoc.CreateAttribute("up");
+				xmlattr.Value = string.Format("{0:f},{1:f},{2:f}", _clubUpX[i].value, _clubUpY[i].value, _clubUpZ[i].value);
+				xmlKeyFrame.Attributes.Append(xmlattr);
+
+				xmlattr = xmldoc.CreateAttribute("forward");
+				xmlattr.Value = string.Format("{0:f},{1:f},{2:f}", _clubForwardX[i].value, _clubForwardY[i].value, _clubForwardZ[i].value);
 				xmlKeyFrame.Attributes.Append(xmlattr);
 
 				xmlCurve.AppendChild(xmlKeyFrame);
@@ -304,9 +319,12 @@ namespace SmartGolf
 			_clubPosX = new AnimationCurve();
 			_clubPosY = new AnimationCurve();
 			_clubPosZ = new AnimationCurve();
-			_clubDirX = new AnimationCurve();
-			_clubDirY = new AnimationCurve();
-			_clubDirZ = new AnimationCurve();
+			_clubUpX = new AnimationCurve();
+			_clubUpY = new AnimationCurve();
+			_clubUpZ = new AnimationCurve();
+			_clubForwardX = new AnimationCurve();
+			_clubForwardY = new AnimationCurve();
+			_clubForwardZ = new AnimationCurve();
 		}
 
 		private void ReadyCurve()
@@ -320,23 +338,24 @@ namespace SmartGolf
 			_characterUp.Normalize();
 			_characterRight = Vector3.Cross(_characterUp, _characterForward);
 			_characterRight.Normalize();
-
-			Vector3 offset = clubGeometry.clubUp.position - clubGeometry.clubCenter.position;
-			_clubLength = offset.magnitude;
 		}
 
 		private void AddCurve(float time)
 		{
-			Vector3 pos = clubGeometry.clubUp.position - _characterCenter;
+			Vector3 pos = clubGeometry.clubCenter.position - _characterCenter;
 			_clubPosX.AddKey(new Keyframe(time, ScalarOnVector(pos, _characterRight)));
 			_clubPosY.AddKey(new Keyframe(time, ScalarOnVector(pos, _characterUp)));
 			_clubPosZ.AddKey(new Keyframe(time, ScalarOnVector(pos, _characterForward)));
 			
-			Vector3 dir = clubGeometry.clubCenter.position - clubGeometry.clubUp.position;
-			dir.Normalize();
-			_clubDirX.AddKey(new Keyframe(time, ScalarOnVector(dir, _characterRight)));
-			_clubDirY.AddKey(new Keyframe(time, ScalarOnVector(dir, _characterUp)));
-			_clubDirZ.AddKey(new Keyframe(time, ScalarOnVector(dir, _characterForward)));
+			Vector3 dir = clubGeometry.clubDirUp;
+			_clubUpX.AddKey(new Keyframe(time, ScalarOnVector(dir, _characterRight)));
+			_clubUpY.AddKey(new Keyframe(time, ScalarOnVector(dir, _characterUp)));
+			_clubUpZ.AddKey(new Keyframe(time, ScalarOnVector(dir, _characterForward)));
+
+			dir = clubGeometry.clubDirForward;
+			_clubForwardX.AddKey(new Keyframe(time, ScalarOnVector(dir, _characterRight)));
+			_clubForwardY.AddKey(new Keyframe(time, ScalarOnVector(dir, _characterUp)));
+			_clubForwardZ.AddKey(new Keyframe(time, ScalarOnVector(dir, _characterForward)));
 			
 			rollAngles.AddKey(new Keyframe(time, clubGeometry.rollAngle));
 			yawAngles.AddKey(new Keyframe(time, clubGeometry.yawAngle));
@@ -361,9 +380,12 @@ namespace SmartGolf
 			MakeSmoothCurve(ref _clubPosX);
 			MakeSmoothCurve(ref _clubPosY);
 			MakeSmoothCurve(ref _clubPosZ);
-			MakeSmoothCurve(ref _clubDirX);
-			MakeSmoothCurve(ref _clubDirY);
-			MakeSmoothCurve(ref _clubDirZ);
+			MakeSmoothCurve(ref _clubUpX);
+			MakeSmoothCurve(ref _clubUpY);
+			MakeSmoothCurve(ref _clubUpZ);
+			MakeSmoothCurve(ref _clubForwardX);
+			MakeSmoothCurve(ref _clubForwardY);
+			MakeSmoothCurve(ref _clubForwardZ);
 
 			// Make Velocity
 			float time = 0f;
@@ -469,17 +491,19 @@ namespace SmartGolf
 		public Vector3 GetClubPosition(float time)
 		{
 			Vector3 pos = _clubPosX.Evaluate(time) * _characterRight + _clubPosY.Evaluate(time) * _characterUp + _clubPosZ.Evaluate(time) * _characterForward;
-			Vector3 dir = _clubDirX.Evaluate(time) * _characterRight + _clubDirY.Evaluate(time) * _characterUp + _clubDirZ.Evaluate(time) * _characterForward;
-			dir.Normalize();
-
-			return _characterCenter + pos + dir * _clubLength;
+			return _characterCenter + pos;
 		}
 
-		public Vector3 GetClubDirection(float time)
+		public Vector3 GetClubDirUp(float time)
 		{
-			Vector3 dir = _clubDirX.Evaluate(time) * _characterRight + _clubDirY.Evaluate(time) * _characterUp + _clubDirZ.Evaluate(time) * _characterForward;
-			dir.Normalize();
-			return dir;
+			Vector3 dir = _clubUpX.Evaluate(time) * _characterRight + _clubUpY.Evaluate(time) * _characterUp + _clubUpZ.Evaluate(time) * _characterForward;
+			return dir.normalized;
+		}
+
+		public Vector3 GetClubDirForward(float time)
+		{
+			Vector3 dir = _clubForwardX.Evaluate(time) * _characterRight + _clubForwardY.Evaluate(time) * _characterUp + _clubForwardZ.Evaluate(time) * _characterForward;
+			return dir.normalized;
 		}
 
 		private void MakeSmoothCurve(ref AnimationCurve curve)
