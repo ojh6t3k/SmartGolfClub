@@ -13,6 +13,7 @@ namespace SmartGolf
 		public Transform clubCenter;
 		public Transform clubUp;
 		public Transform clubForward;
+		public Transform clubFace;
 
 		public bool displayDebug = true;
 
@@ -164,6 +165,47 @@ namespace SmartGolf
 			}
 		}
 
+		public Vector3 EvaluateClubFacePosition(Vector3 upPos, Vector3 upDir, Vector3 forwardDir)
+		{
+			Quaternion rot = Quaternion.FromToRotation(clubDirUp, upDir);
+			Vector3 center = rot * (clubCenter.position - clubUp.position);
+			Vector3 face = rot * (clubFace.position - clubUp.position);
+			Vector3 forward = rot * (clubForward.position - clubUp.position);
+
+			forward = forward - center;
+			rot = Quaternion.FromToRotation(forward.normalized, forwardDir);
+			face = rot * (face - center);
+
+			return upPos + (-upDir * clubLength) + face;
+		}
+
+		public Vector3 ToRelativePosition(Vector3 worldPos)
+		{
+			Vector3 offset = worldPos - characterCenter.position;
+			return new Vector3(ScalarOnVector(offset, _characterRight)
+			                   ,ScalarOnVector(offset, _characterUp)
+			                   ,ScalarOnVector(offset, _characterForward));
+		}
+
+		public Vector3 ToRelativeDirection(Vector3 worldDir)
+		{
+			Vector3 dir = new Vector3(ScalarOnVector(worldDir, _characterRight)
+			                          ,ScalarOnVector(worldDir, _characterUp)
+			                          ,ScalarOnVector(worldDir, _characterForward));
+			return dir.normalized;
+		}
+
+		public Vector3 ToWorldPosition(Vector3 relativePos)
+		{
+			return (relativePos.x * _characterRight + relativePos.y * _characterUp + relativePos.z * _characterForward) + characterCenter.position;
+		}
+
+		public Vector3 ToWorldDirection(Vector3 relativeDir)
+		{
+			Vector3 dir = relativeDir.x * _characterRight + relativeDir.y * _characterUp + relativeDir.z * _characterForward;
+			return dir.normalized;
+		}
+
 		private Vector3 GetPosiionOnPlane(Vector3 target, Vector3 root, Vector3 forward, Vector3 right)
 		{
 			Vector3 dir = target - root;
@@ -183,6 +225,16 @@ namespace SmartGolf
 				angle = -angle;
 
 			return angle;
+		}
+
+		private float ScalarOnVector(Vector3 vector, Vector3 onNormal)
+		{
+			Vector3 proj = Vector3.Project(vector, onNormal);
+			float scalar = proj.magnitude;
+			if(Vector3.Dot(proj, onNormal) < 0f)
+				scalar = -scalar;
+			
+			return scalar;
 		}
 	}
 }

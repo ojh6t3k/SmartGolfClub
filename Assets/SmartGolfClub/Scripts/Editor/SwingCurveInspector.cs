@@ -58,7 +58,8 @@ public class SwingCurveInspector : Editor
 			EditorGUILayout.FloatField("Top Time", swingCurve.topTime);
 			EditorGUILayout.FloatField("Finish Time", swingCurve.finishTime);
 
-			swingCurve.displayLine = EditorGUILayout.Toggle("Display Line", swingCurve.displayLine);
+			if(Application.isPlaying == true)
+				swingCurve.displayLine = EditorGUILayout.Toggle("Display Line", swingCurve.displayLine);
 
 			if(GUILayout.Button("Save Curve") == true)
 				swingCurve.SaveCurve(EditorUtility.SaveFilePanel("Save Curve", "Assets", swingCurve.dataName, "xml"));

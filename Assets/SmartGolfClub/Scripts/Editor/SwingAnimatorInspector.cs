@@ -9,6 +9,7 @@ public class SwingAnimatorInspector : Editor
 	SerializedProperty animator;
 	SerializedProperty swingState;
 	SerializedProperty layer;
+	SerializedProperty speed;
 	SerializedProperty swingClip;
 	SerializedProperty swingCurve;
 
@@ -17,6 +18,7 @@ public class SwingAnimatorInspector : Editor
 		animator = serializedObject.FindProperty("animator");
 		swingState = serializedObject.FindProperty("swingState");
 		layer = serializedObject.FindProperty("layer");
+		speed = serializedObject.FindProperty("speed");
 		swingClip = serializedObject.FindProperty("swingClip");
 		swingCurve = serializedObject.FindProperty("swingCurve");
 	}
@@ -30,6 +32,7 @@ public class SwingAnimatorInspector : Editor
 		EditorGUILayout.PropertyField(animator, new GUIContent("animator"));
 		EditorGUILayout.PropertyField(swingState, new GUIContent("swingState"));
 		EditorGUILayout.PropertyField(layer, new GUIContent("layer"));
+		EditorGUILayout.PropertyField(speed, new GUIContent("speed"));
 		EditorGUILayout.PropertyField(swingClip, new GUIContent("swingClip"));
 		EditorGUILayout.PropertyField(swingCurve, new GUIContent("swingCurve"));
 

@@ -9,6 +9,7 @@ namespace SmartGolf
 		public Animator animator;
 		public string swingState = "Swing";
 		public int layer = 0;
+		public float speed = 1f;
 		public AnimationClip swingClip;
 		public SwingCurve swingCurve;
 
@@ -40,7 +41,7 @@ namespace SmartGolf
 		{
 			if(animator != null)
 			{
-				animator.speed = 1f;
+				animator.speed = speed;
 				animator.Play(swingState, layer, 0f);
 			}
 		}

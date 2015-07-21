@@ -53,11 +53,11 @@ namespace SmartGolf
 					}
 
 					Vector3 from = userClub.clubDirUp;
-					Vector3 to = userCurve.GetClubDirUp(t);
+					Vector3 to = userCurve.EvaluateClubUpDirection(t);
 					imu.target.rotation = Quaternion.FromToRotation(from, to) * imu.target.rotation;
 
 					from = userClub.clubDirForward;
-					to = userCurve.GetClubDirForward(t);
+					to = userCurve.EvaluateClubForwardDirection(t);
 					imu.target.rotation = Quaternion.FromToRotation(from, to) * imu.target.rotation;
 
 					_time += Time.deltaTime;
