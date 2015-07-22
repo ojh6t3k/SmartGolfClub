@@ -165,18 +165,18 @@ namespace SmartGolf
 			}
 		}
 
-		public Vector3 EvaluateClubFacePosition(Vector3 upPos, Vector3 upDir, Vector3 forwardDir)
+		public Vector3 EvaluateClubPosition(Vector3 fromPos, Vector3 upPos, Vector3 upDir, Vector3 forwardDir)
 		{
 			Quaternion rot = Quaternion.FromToRotation(clubDirUp, upDir);
 			Vector3 center = rot * (clubCenter.position - clubUp.position);
-			Vector3 face = rot * (clubFace.position - clubUp.position);
+			Vector3 pos = rot * (fromPos - clubUp.position);
 			Vector3 forward = rot * (clubForward.position - clubUp.position);
 
 			forward = forward - center;
 			rot = Quaternion.FromToRotation(forward.normalized, forwardDir);
-			face = rot * (face - center);
+			pos = rot * (pos - center);
 
-			return upPos + (-upDir * clubLength) + face;
+			return upPos + (-upDir * clubLength) + pos;
 		}
 
 		public Vector3 ToRelativePosition(Vector3 worldPos)
@@ -206,7 +206,7 @@ namespace SmartGolf
 			return dir.normalized;
 		}
 
-		private Vector3 GetPosiionOnPlane(Vector3 target, Vector3 root, Vector3 forward, Vector3 right)
+		static public Vector3 GetPosiionOnPlane(Vector3 target, Vector3 root, Vector3 forward, Vector3 right)
 		{
 			Vector3 dir = target - root;
 			Vector3 prjForward = Vector3.Project(dir, forward);
@@ -214,7 +214,7 @@ namespace SmartGolf
 			return (prjForward + prjRight) + root;
 		}
 
-		private float GetAngle(Vector3 from, Vector3 to, Vector3 up)
+		static public float GetAngle(Vector3 from, Vector3 to, Vector3 up)
 		{
 			from.Normalize();
 			to.Normalize();
@@ -227,7 +227,7 @@ namespace SmartGolf
 			return angle;
 		}
 
-		private float ScalarOnVector(Vector3 vector, Vector3 onNormal)
+		static public float ScalarOnVector(Vector3 vector, Vector3 onNormal)
 		{
 			Vector3 proj = Vector3.Project(vector, onNormal);
 			float scalar = proj.magnitude;

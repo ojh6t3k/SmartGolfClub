@@ -425,11 +425,11 @@ namespace SmartGolf
 
 		public Vector3 EvaluateClubFacePosition(float time)
 		{
-			Vector3 pos = EvaluateClubUpPosition(time);
+			Vector3 upPos = EvaluateClubUpPosition(time);
 			Vector3 dirUp = EvaluateClubUpDirection(time);
 			Vector3 dirForward = EvaluateClubForwardDirection(time);
 
-			return clubGeometry.EvaluateClubFacePosition(pos, dirUp, dirForward);
+			return clubGeometry.EvaluateClubPosition(clubGeometry.clubFace.position, upPos, dirUp, dirForward);
 		}
 
 		public Vector3 EvaluateClubUpPosition(float time)
