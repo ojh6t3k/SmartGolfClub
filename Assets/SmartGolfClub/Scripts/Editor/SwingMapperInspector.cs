@@ -13,6 +13,7 @@ public class SwingMapperInspector : Editor
 	SerializedProperty userCurve;
 	SerializedProperty imu;
 	SerializedProperty replaySpeed;
+	SerializedProperty displayDebug;
 	SerializedProperty OnReplayStarted;
 	SerializedProperty OnReplayStopped;
 	
@@ -24,6 +25,7 @@ public class SwingMapperInspector : Editor
 		userCurve = serializedObject.FindProperty("userCurve");
 		imu = serializedObject.FindProperty("imu");
 		replaySpeed = serializedObject.FindProperty("replaySpeed");
+		displayDebug = serializedObject.FindProperty("displayDebug");
 		OnReplayStarted = serializedObject.FindProperty("OnReplayStarted");
 		OnReplayStopped = serializedObject.FindProperty("OnReplayStopped");
 	}
@@ -40,6 +42,7 @@ public class SwingMapperInspector : Editor
 		EditorGUILayout.PropertyField(userCurve, new GUIContent("userCurve"));
 		EditorGUILayout.PropertyField(imu, new GUIContent("imu"));
 		EditorGUILayout.PropertyField(replaySpeed, new GUIContent("replaySpeed"));
+		EditorGUILayout.PropertyField(displayDebug, new GUIContent("displayDebug"));
 		
 		if(Application.isPlaying == true)
 		{
@@ -51,6 +54,11 @@ public class SwingMapperInspector : Editor
 			{
 				if(GUILayout.Button("Replay Start") == true)
 					swingMapper.ReplayStart();
+
+				float oldTime = swingMapper.time;
+				float newTime = EditorGUILayout.Slider("Time", oldTime, 0f, swingMapper.userCurve.totalTime);
+				if(oldTime != newTime)
+					swingMapper.time = newTime;
 			}
 			else
 			{

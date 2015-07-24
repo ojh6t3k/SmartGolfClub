@@ -83,7 +83,7 @@ namespace SmartGolf
 				float curRollAngleDiff = curRollAngle - _preRollAngle;
 				if(_time == 0f)
 				{
-					if(Mathf.Abs(curRollAngleDiff) > 5f)
+					if(Mathf.Abs(curRollAngleDiff) > 15f)
 					{
 						_time += Time.deltaTime;
 						AddCurve(_time);
@@ -98,15 +98,21 @@ namespace SmartGolf
 
 					if(Mathf.Abs(curRollAngleDiff) > 1f)
 					{
-						if(_preRollAngleDiff <= 0f && curRollAngleDiff > 0f)
+						if(_topTime == 0f)
 						{
-							_topTime = _preTime;
+							if(_preRollAngleDiff <= 0f && curRollAngleDiff > 0f)
+							{
+								_topTime = _preTime;
+							}
 						}
-						else if(_preRollAngleDiff >= 0f && curRollAngleDiff < 0f)
+						else
 						{
-							_time = _preTime;
-							RecordingStop();
-							return;
+							if(_preRollAngleDiff >= 0f && curRollAngleDiff < 0f)
+							{
+								_time = _preTime;
+								RecordingStop();
+								return;
+							}
 						}
 
 						AddCurve(_time);

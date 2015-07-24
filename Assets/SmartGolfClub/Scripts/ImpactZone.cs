@@ -59,18 +59,13 @@ namespace SmartGolf
 			}
 		}
 
-		public void MoveToClubFace(ClubGeometry clubGeometry)
+		public void MoveTo(Vector3 pos, Vector3 dir)
 		{
-			Vector3 clubFace = clubGeometry.clubFace.position;
-			clubFace.y = transform.position.y;
+			pos.y = transform.position.y;
+			dir = Vector3.Project(dir, transform.forward) + Vector3.Project(dir, transform.right);
 
-			Vector3 clubFaceForward = clubGeometry.clubFace.forward;
-			clubFaceForward = Vector3.Project(clubFaceForward, transform.forward) + Vector3.Project(clubFaceForward, transform.right);
-
-			Quaternion q = Quaternion.FromToRotation(transform.forward, clubFaceForward);
-
-			transform.position = clubFace;
-			transform.rotation = q * transform.rotation;
+			transform.position = pos;
+			transform.rotation = Quaternion.FromToRotation(transform.forward, dir) * transform.rotation;
 		}
 
 		public void AnalyzeCurve()
@@ -102,11 +97,11 @@ namespace SmartGolf
 			_inPos = _inPos + Vector3.Project(offset, transform.right) + Vector3.Project(offset, transform.up);
 
 			SearchSwingCurve(ref pos, ref time, 0.0001f, ball.position, transform.forward);
-			SearchSwingCurve(ref pos, ref time, -0.0001f, ball.position, -transform.forward);
+			SearchSwingCurve(ref pos, ref time, -0.00001f, ball.position, -transform.forward);
 			_impactTime = time;
 
 			SearchSwingCurve(ref pos, ref time, 0.0001f, _outPos, transform.forward);
-			SearchSwingCurve(ref pos, ref time, -0.0001f, _outPos, -transform.forward);
+			SearchSwingCurve(ref pos, ref time, -0.00001f, _outPos, -transform.forward);
 
 			offset = pos - _outPos;
 			_outPos = _outPos + Vector3.Project(offset, transform.right) + Vector3.Project(offset, transform.up);

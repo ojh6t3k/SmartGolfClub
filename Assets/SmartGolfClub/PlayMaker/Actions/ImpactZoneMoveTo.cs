@@ -6,20 +6,22 @@ using SmartGolf;
 namespace HutongGames.PlayMaker.Actions
 {
 	[ActionCategory("Smart Golf")]
-	[Tooltip("ImpactZone.MoveToClubFace()")]
-	public class ImpactZoneMoveToClubFace : FsmStateAction
+	[Tooltip("ImpactZone.MoveTo()")]
+	public class ImpactZoneMoveTo : FsmStateAction
 	{
 		[RequiredField]
 		public ImpactZone impactZone;
 		[RequiredField]
-		public ClubGeometry clubGeometry;
+		public FsmVector3 position;
+		[RequiredField]
+		public FsmVector3 direction;
 		
 		public override void OnEnter()
 		{
 			base.OnEnter();
 			
-			if(impactZone != null && clubGeometry != null)
-				impactZone.MoveToClubFace(clubGeometry);
+			if(impactZone != null)
+				impactZone.MoveTo(position.Value, direction.Value);
 			
 			Finish();
 		}
