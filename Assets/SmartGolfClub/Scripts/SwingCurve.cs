@@ -529,6 +529,22 @@ namespace SmartGolf
 			}
 		}
 
+		public float upSwingTime
+		{
+			get
+			{
+				return _topTime;
+			}
+		}
+
+		public float downSwingTime
+		{
+			get
+			{
+				return _finishTime - _topTime;
+			}
+		}
+
 		public float topTime
 		{
 			get
