@@ -117,6 +117,8 @@ namespace SmartGolf
 			_hitDir = clubFaceForward - clubFace;
 			_hitDir.Normalize();
 
+			_velocity = swingCurve.clubVelocities.Evaluate(_impactTime);
+
 			Vector3 proj = Vector3.Project(_hitDir, transform.forward) + Vector3.Project(_hitDir, transform.right);
 			_faceAngle = ClubGeometry.GetAngle(transform.forward, proj,transform.up);
 
@@ -193,7 +195,7 @@ namespace SmartGolf
 		{
 			get
 			{
-				return _velocity;
+				return _velocity / 1000f;
 			}
 		}
 
@@ -202,6 +204,14 @@ namespace SmartGolf
 			get
 			{
 				return _hitDir;
+			}
+		}
+
+		public Vector3 hitForce
+		{
+			get
+			{
+				return _hitDir * velocity;
 			}
 		}
 	}
