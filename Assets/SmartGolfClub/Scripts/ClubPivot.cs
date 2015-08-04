@@ -18,15 +18,8 @@ namespace SmartGolf
 		// Update is called once per frame
 		void Update ()
 		{
-				
-		}
-
-		void LateUpdate()
-		{
 			if(root != null && toPivot != null)
-			{
 				root.position += (toPivot.position - transform.position);
-			}
 		}
 	}
 }

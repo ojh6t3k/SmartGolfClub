@@ -79,6 +79,7 @@ namespace SmartGolf
 					{
 						animator.speed = 0f;
 						animator.Play(swingState, layer, _normalizedTime);
+						animator.
 					}
 				}
 			}

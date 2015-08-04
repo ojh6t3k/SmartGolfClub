@@ -75,7 +75,11 @@ namespace SmartGolf
 		}
 		
 		// Update is called once per frame
-		void Update ()
+		void Update()
+		{
+		}
+
+		void LateUpdate()
 		{
 			if(_recording == true)
 			{
